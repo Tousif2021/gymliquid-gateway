@@ -48,7 +48,8 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="p-6 rounded-lg bg-white/50 backdrop-blur-sm shadow-lg"
+              className="p-6 rounded-lg bg-white/50 backdrop-blur-sm shadow-lg cursor-pointer hover:shadow-xl transition-all"
+              onClick={() => feature.onClick(navigate)}
             >
               <feature.icon className="w-12 h-12 text-primary mb-4" />
               <h3 className="text-xl font-semibold text-primary mb-2">
@@ -68,16 +69,19 @@ const features = [
     title: "Digital Membership",
     description: "Access your membership card and QR code instantly on your phone",
     icon: QrCodeIcon,
+    onClick: (navigate: (path: string) => void) => navigate("/scanner"),
   },
   {
     title: "Book Classes",
     description: "Browse and book fitness classes that fit your schedule",
     icon: CalendarIcon,
+    onClick: (navigate: (path: string) => void) => navigate("/classes"),
   },
   {
     title: "Track Progress",
     description: "Monitor your gym visits and workout achievements",
     icon: BarChartIcon,
+    onClick: (navigate: (path: string) => void) => navigate("/profile"),
   },
 ];
 
