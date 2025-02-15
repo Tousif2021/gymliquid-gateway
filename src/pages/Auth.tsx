@@ -13,11 +13,26 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const validatePassword = (password: string) => {
+    if (mode === "signup" && password.length < 6) {
+      setPasswordError("Password must be at least 6 characters long");
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validatePassword(password)) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -66,14 +81,22 @@ const Auth = () => {
               required
               disabled={loading}
             />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={loading}
-            />
+            <div className="space-y-2">
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  validatePassword(e.target.value);
+                }}
+                required
+                disabled={loading}
+              />
+              {passwordError && (
+                <p className="text-sm text-destructive">{passwordError}</p>
+              )}
+            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Loading..." : mode === "login" ? "Sign In" : "Sign Up"}
             </Button>
