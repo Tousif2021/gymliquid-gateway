@@ -42,7 +42,7 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
-        navigate("/profile");
+        navigate("/dashboard"); // Changed this line to redirect to dashboard
       } else {
         const { error } = await supabase.auth.signUp({
           email,

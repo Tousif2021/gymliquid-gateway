@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import Classes from "./pages/Classes";
 import Admin from "./pages/Admin";
 import Scanner from "./pages/Scanner";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/classes" element={<Classes />} />
             <Route path="/admin" element={<Admin />} />
