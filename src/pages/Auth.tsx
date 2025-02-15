@@ -4,18 +4,50 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode") === "login" ? "login" : "signup";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication logic
-    console.log("Auth submission:", { email, password, mode });
+    setLoading(true);
+
+    try {
+      if (mode === "login") {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        navigate("/profile");
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast({
+          title: "Success!",
+          description: "Please check your email to confirm your account.",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,6 +64,7 @@ const Auth = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={loading}
             />
             <Input
               type="password"
@@ -39,9 +72,10 @@ const Auth = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={loading}
             />
-            <Button type="submit" className="w-full">
-              {mode === "login" ? "Sign In" : "Sign Up"}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Loading..." : mode === "login" ? "Sign In" : "Sign Up"}
             </Button>
             <Button
               type="button"
@@ -50,6 +84,7 @@ const Auth = () => {
               onClick={() =>
                 navigate(`/auth?mode=${mode === "login" ? "signup" : "login"}`)
               }
+              disabled={loading}
             >
               {mode === "login"
                 ? "Don't have an account? Sign up"
