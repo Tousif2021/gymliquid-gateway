@@ -16,7 +16,7 @@ const Index = () => {
           className="text-center space-y-6"
         >
           <h1 className="text-4xl md:text-6xl font-bold text-primary">
-            Welcome to FitPass
+            Welcome to Allstars Trainning center
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Your digital gateway to fitness. Join our community and transform your
