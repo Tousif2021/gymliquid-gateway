@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
 import { LockIcon } from "lucide-react";
 
 const Profile = () => {
@@ -72,23 +71,12 @@ const Profile = () => {
                 <Button variant="outline" size="sm">
                   Update Photo
                 </Button>
-                <div className="space-y-3 w-full max-w-xs">
-                  <Input
-                    placeholder="First Name"
-                    value={profile?.first_name || ""}
-                    className="text-sm"
-                    disabled
-                  />
-                  <Input
-                    placeholder="Last Name"
-                    value={profile?.last_name || ""}
-                    className="text-sm"
-                    disabled
-                  />
-                </div>
-                <div className="text-center">
+                <div className="text-center space-y-2">
+                  <h2 className="text-xl font-bold">
+                    {profile?.first_name} {profile?.last_name}
+                  </h2>
                   <div className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
-                    {profile?.membership_status || "Active"}
+                    {profile?.membership_status === 'active' ? 'Active' : profile?.membership_status || 'Active'}
                   </div>
                 </div>
               </div>
