@@ -13,8 +13,30 @@ import Admin from "./pages/Admin";
 import Scanner from "./pages/Scanner";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import BottomNav from "./components/BottomNav";
+import { useLocation } from "react-router-dom";
 
-const queryClient = new QueryClient();
+// Wrapper component to handle the bottom navigation visibility
+const AppContent = () => {
+  const location = useLocation();
+  const showBottomNav = !["/", "/auth"].includes(location.pathname);
+
+  return (
+    <div className={cn("min-h-screen", showBottomNav && "pb-16")}>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/classes" element={<Classes />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/scanner" element={<Scanner />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {showBottomNav && <BottomNav />}
+    </div>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -23,20 +45,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/classes" element={<Classes />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/scanner" element={<Scanner />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppContent />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
+
+const queryClient = new QueryClient();
 
 export default App;
