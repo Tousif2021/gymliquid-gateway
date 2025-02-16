@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import { LockIcon } from "lucide-react";
 
 const Profile = () => {
@@ -71,11 +72,22 @@ const Profile = () => {
                 <Button variant="outline" size="sm">
                   Update Photo
                 </Button>
-                <div className="text-center space-y-1">
-                  <h2 className="text-xl font-semibold">
-                    {profile?.first_name} {profile?.last_name}
-                  </h2>
-                  <div className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground font-medium">
+                <div className="space-y-3 w-full max-w-xs">
+                  <Input
+                    placeholder="First Name"
+                    value={profile?.first_name || ""}
+                    className="text-sm"
+                    disabled
+                  />
+                  <Input
+                    placeholder="Last Name"
+                    value={profile?.last_name || ""}
+                    className="text-sm"
+                    disabled
+                  />
+                </div>
+                <div className="text-center">
+                  <div className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
                     {profile?.membership_status || "Active"}
                   </div>
                 </div>
@@ -85,19 +97,19 @@ const Profile = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Membership Details</CardTitle>
+              <CardTitle className="text-lg">Membership Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-4 text-sm">
                 <div>
                   <span className="font-semibold">Email:</span> {user.email}
                 </div>
-                <div className="p-4 rounded-lg border-2 border-dashed flex items-center justify-between bg-muted/50">
+                <div className="p-3 rounded-lg border-2 border-dashed flex items-center justify-between bg-muted/50">
                   <div>
-                    <span className="font-semibold block mb-1">QR Code ID</span>
-                    <span className="text-muted-foreground">••••••••{user.id.slice(-4)}</span>
+                    <span className="font-semibold block mb-1">Member ID</span>
+                    <span className="text-muted-foreground">{user.id}</span>
                   </div>
-                  <LockIcon className="text-muted-foreground h-5 w-5" />
+                  <LockIcon className="text-muted-foreground h-4 w-4" />
                 </div>
               </div>
             </CardContent>
@@ -105,19 +117,21 @@ const Profile = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Gym Activity</CardTitle>
+              <CardTitle className="text-lg">Gym Activity</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>
-                <span className="font-semibold">Visits this month:</span>{" "}
-                {profile?.visits_this_month || 0}
-              </p>
-              <p>
-                <span className="font-semibold">Last visit:</span>{" "}
-                {profile?.last_visit
-                  ? new Date(profile.last_visit).toLocaleDateString()
-                  : "No visits yet"}
-              </p>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <span className="font-semibold">Visits this month:</span>{" "}
+                  {profile?.visits_this_month || 0}
+                </p>
+                <p>
+                  <span className="font-semibold">Last visit:</span>{" "}
+                  {profile?.last_visit
+                    ? new Date(profile.last_visit).toLocaleDateString()
+                    : "No visits yet"}
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>

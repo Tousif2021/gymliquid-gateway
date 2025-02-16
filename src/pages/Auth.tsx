@@ -12,6 +12,8 @@ const Auth = () => {
   const mode = searchParams.get("mode") === "login" ? "login" : "signup";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
@@ -42,11 +44,17 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
-        navigate("/dashboard"); // Changed this line to redirect to dashboard
+        navigate("/dashboard");
       } else {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+            },
+          },
         });
         if (error) throw error;
         toast({
@@ -73,6 +81,26 @@ const Auth = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {mode === "signup" && (
+              <>
+                <Input
+                  type="text"
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required={mode === "signup"}
+                  disabled={loading}
+                />
+                <Input
+                  type="text"
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required={mode === "signup"}
+                  disabled={loading}
+                />
+              </>
+            )}
             <Input
               type="email"
               placeholder="Email"
