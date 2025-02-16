@@ -8,10 +8,12 @@ import { Card } from "@/components/ui/card";
 import { QrCode as QrCodeIcon, Calendar as CalendarIcon, BarChart as BarChartIcon, LogOut } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -35,8 +37,23 @@ const Dashboard = () => {
   });
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      // Only navigate after successful sign out
+      navigate("/");
+    } catch (error: any) {
+      console.error("Sign out error:", error);
+      toast({
+        title: "Error signing out",
+        description: "Please try again",
+        variant: "destructive",
+      });
+      // Force navigate to home page if there's an error
+      navigate("/");
+    }
   };
 
   if (loading || !user) {
