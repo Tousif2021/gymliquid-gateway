@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LockIcon } from "lucide-react";
 
 const Profile = () => {
   const { user, loading } = useAuth();
@@ -54,20 +56,49 @@ const Profile = () => {
             Sign Out
           </Button>
         </div>
+        
         <div className="space-y-6">
           <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center space-y-4">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src="/placeholder.svg" />
+                  <AvatarFallback>
+                    {profile?.first_name?.[0]}
+                    {profile?.last_name?.[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <Button variant="outline" size="sm">
+                  Update Photo
+                </Button>
+                <div className="text-center space-y-1">
+                  <h2 className="text-xl font-semibold">
+                    {profile?.first_name} {profile?.last_name}
+                  </h2>
+                  <div className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground font-medium">
+                    {profile?.membership_status || "Active"}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
             <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
+              <CardTitle>Membership Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <p>
+              <div className="space-y-4">
+                <div>
                   <span className="font-semibold">Email:</span> {user.email}
-                </p>
-                <p>
-                  <span className="font-semibold">Membership Status:</span>{" "}
-                  {profile?.membership_status || "Active"}
-                </p>
+                </div>
+                <div className="p-4 rounded-lg border-2 border-dashed flex items-center justify-between bg-muted/50">
+                  <div>
+                    <span className="font-semibold block mb-1">QR Code ID</span>
+                    <span className="text-muted-foreground">••••••••{user.id.slice(-4)}</span>
+                  </div>
+                  <LockIcon className="text-muted-foreground h-5 w-5" />
+                </div>
               </div>
             </CardContent>
           </Card>
