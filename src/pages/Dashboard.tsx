@@ -3,17 +3,14 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { QrCode as QrCodeIcon, Calendar as CalendarIcon, BarChart as BarChartIcon, LogOut } from "lucide-react";
+import { QrCode as QrCodeIcon, Calendar as CalendarIcon, BarChart as BarChartIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -35,26 +32,6 @@ const Dashboard = () => {
     },
     enabled: !!user,
   });
-
-  const handleSignOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw error;
-      }
-      // Only navigate after successful sign out
-      navigate("/");
-    } catch (error: any) {
-      console.error("Sign out error:", error);
-      toast({
-        title: "Error signing out",
-        description: "Please try again",
-        variant: "destructive",
-      });
-      // Force navigate to home page if there's an error
-      navigate("/");
-    }
-  };
 
   if (loading || !user) {
     return <div>Loading...</div>;
@@ -84,15 +61,9 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-primary">Welcome back{profile?.first_name ? `, ${profile.first_name}` : ''}</h1>
-            <p className="text-muted-foreground">Access all your fitness features here</p>
-          </div>
-          <Button variant="outline" onClick={handleSignOut} className="gap-2">
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-primary">Welcome back{profile?.first_name ? `, ${profile.first_name}` : ''}</h1>
+          <p className="text-muted-foreground">Access all your fitness features here</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
