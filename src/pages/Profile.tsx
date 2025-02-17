@@ -93,7 +93,7 @@ const Profile = () => {
                         <Avatar className="h-24 w-24">
                           <AvatarImage src="/placeholder.svg" />
                           <AvatarFallback>
-                            {getInitials(profile?.display_name)}
+                            {getInitials(profile?.first_name)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
