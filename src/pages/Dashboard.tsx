@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -54,7 +53,7 @@ const Dashboard = () => {
       title: "Track Progress",
       description: "Monitor your gym visits and achievements",
       icon: BarChartIcon,
-      onClick: () => navigate("/profile"),
+      onClick: () => navigate("/track-progress"),
     },
   ];
 

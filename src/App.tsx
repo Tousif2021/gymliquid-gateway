@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import BottomNav from "./components/BottomNav";
 import { useLocation } from "react-router-dom";
+import TrackProgress from "./pages/TrackProgress";
 
 // Wrapper component to handle the bottom navigation visibility
 const AppContent = () => {
@@ -32,6 +32,7 @@ const AppContent = () => {
         <Route path="/classes" element={<Classes />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/scanner" element={<Scanner />} />
+        <Route path="/track-progress" element={<TrackProgress />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {showBottomNav && <BottomNav />}

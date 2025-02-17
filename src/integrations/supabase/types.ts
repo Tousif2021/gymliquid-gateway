@@ -11,29 +11,59 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          average_visit_duration: number | null
+          calories_burned: number | null
+          completed_programs: Json | null
+          favorite_workout_times: Json | null
           first_name: string | null
           id: string
           last_name: string | null
           last_visit: string | null
+          membership_expiry: string | null
+          membership_since: string | null
           membership_status: string | null
+          membership_type: string | null
+          payment_method: Json | null
+          phone_number: string | null
+          total_visits: number | null
           updated_at: string | null
           visits_this_month: number | null
         }
         Insert: {
+          average_visit_duration?: number | null
+          calories_burned?: number | null
+          completed_programs?: Json | null
+          favorite_workout_times?: Json | null
           first_name?: string | null
           id: string
           last_name?: string | null
           last_visit?: string | null
+          membership_expiry?: string | null
+          membership_since?: string | null
           membership_status?: string | null
+          membership_type?: string | null
+          payment_method?: Json | null
+          phone_number?: string | null
+          total_visits?: number | null
           updated_at?: string | null
           visits_this_month?: number | null
         }
         Update: {
+          average_visit_duration?: number | null
+          calories_burned?: number | null
+          completed_programs?: Json | null
+          favorite_workout_times?: Json | null
           first_name?: string | null
           id?: string
           last_name?: string | null
           last_visit?: string | null
+          membership_expiry?: string | null
+          membership_since?: string | null
           membership_status?: string | null
+          membership_type?: string | null
+          payment_method?: Json | null
+          phone_number?: string | null
+          total_visits?: number | null
           updated_at?: string | null
           visits_this_month?: number | null
         }

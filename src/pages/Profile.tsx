@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LockIcon, Camera, Trash2 } from "lucide-react";
+import { LockIcon, Camera, Trash2, CreditCard } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +52,15 @@ const Profile = () => {
   if (!user) {
     return null;
   }
+
+  const formatDate = (date: string | null) => {
+    if (!date) return "N/A";
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
@@ -117,6 +126,22 @@ const Profile = () => {
                 <div>
                   <span className="font-semibold">Email:</span> {user.email}
                 </div>
+                <div>
+                  <span className="font-semibold">Phone:</span>{" "}
+                  {profile?.phone_number || "Not provided"}
+                </div>
+                <div>
+                  <span className="font-semibold">Member Since:</span>{" "}
+                  {formatDate(profile?.membership_since)}
+                </div>
+                <div>
+                  <span className="font-semibold">Membership Type:</span>{" "}
+                  <span className="capitalize">{profile?.membership_type || "Basic"}</span>
+                </div>
+                <div>
+                  <span className="font-semibold">Expiry Date:</span>{" "}
+                  {profile?.membership_expiry ? formatDate(profile.membership_expiry) : "Auto-renewal"}
+                </div>
                 <div className="p-3 rounded-lg border-2 border-dashed flex items-center justify-between bg-muted/50">
                   <div>
                     <span className="font-semibold block mb-1">Member ID</span>
@@ -124,26 +149,15 @@ const Profile = () => {
                   </div>
                   <LockIcon className="text-muted-foreground h-4 w-4" />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Gym Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <p>
-                  <span className="font-semibold">Visits this month:</span>{" "}
-                  {profile?.visits_this_month || 0}
-                </p>
-                <p>
-                  <span className="font-semibold">Last visit:</span>{" "}
-                  {profile?.last_visit
-                    ? new Date(profile.last_visit).toLocaleDateString()
-                    : "No visits yet"}
-                </p>
+                <div className="p-3 rounded-lg border-2 border flex items-center justify-between bg-muted/50">
+                  <div>
+                    <span className="font-semibold block mb-1">Payment Method</span>
+                    <span className="text-muted-foreground">
+                      {profile?.payment_method ? "••••" : "Not set up"}
+                    </span>
+                  </div>
+                  <CreditCard className="text-muted-foreground h-4 w-4" />
+                </div>
               </div>
             </CardContent>
           </Card>
