@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LockIcon } from "lucide-react";
+import { LockIcon, Camera, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Profile = () => {
   const { user, loading } = useAuth();
@@ -61,16 +67,35 @@ const Profile = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="flex flex-col items-center space-y-4">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src="/placeholder.svg" />
-                  <AvatarFallback>
-                    {profile?.first_name?.[0]}
-                    {profile?.last_name?.[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <Button variant="outline" size="sm">
-                  Update Photo
-                </Button>
+                <div className="relative group">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div className="relative cursor-pointer group">
+                        <Avatar className="h-24 w-24">
+                          <AvatarImage src="/placeholder.svg" />
+                          <AvatarFallback>
+                            {profile?.first_name?.[0]}
+                            {profile?.last_name?.[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Camera className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>
+                        <Camera className="mr-2 h-4 w-4" />
+                        Change Photo
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Remove Photo
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                
                 <div className="text-center space-y-2">
                   <h2 className="text-xl font-bold">
                     {profile?.first_name} {profile?.last_name}
