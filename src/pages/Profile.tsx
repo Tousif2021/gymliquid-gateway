@@ -62,6 +62,16 @@ const Profile = () => {
     });
   };
 
+  // Get initials from display_name
+  const getInitials = (name: string | null) => {
+    if (!name) return "";
+    return name
+      .split(" ")
+      .map(part => part[0])
+      .join("")
+      .toUpperCase();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
       <div className="container mx-auto max-w-4xl">
@@ -83,8 +93,7 @@ const Profile = () => {
                         <Avatar className="h-24 w-24">
                           <AvatarImage src="/placeholder.svg" />
                           <AvatarFallback>
-                            {profile?.first_name?.[0]}
-                            {profile?.last_name?.[0]}
+                            {getInitials(profile?.display_name)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -107,7 +116,7 @@ const Profile = () => {
                 
                 <div className="flex flex-col justify-center space-y-2">
                   <h2 className="text-2xl font-bold">
-                    {profile?.first_name} {profile?.last_name}
+                    {profile?.display_name}
                   </h2>
                   <div className="inline-block w-fit px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
                     {profile?.membership_status === 'active' ? 'Active' : profile?.membership_status || 'Active'}

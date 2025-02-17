@@ -14,6 +14,7 @@ export type Database = {
           average_visit_duration: number | null
           calories_burned: number | null
           completed_programs: Json | null
+          display_name: string | null
           favorite_workout_times: Json | null
           first_name: string | null
           id: string
@@ -33,6 +34,7 @@ export type Database = {
           average_visit_duration?: number | null
           calories_burned?: number | null
           completed_programs?: Json | null
+          display_name?: string | null
           favorite_workout_times?: Json | null
           first_name?: string | null
           id: string
@@ -52,6 +54,7 @@ export type Database = {
           average_visit_duration?: number | null
           calories_burned?: number | null
           completed_programs?: Json | null
+          display_name?: string | null
           favorite_workout_times?: Json | null
           first_name?: string | null
           id?: string
