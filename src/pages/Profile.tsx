@@ -7,13 +7,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LockIcon, Camera, Trash2, CreditCard } from "lucide-react";
+import { LockIcon, Camera, Trash2, CreditCard, Mail, Phone, CalendarDays, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const { user, loading } = useAuth();
@@ -62,7 +63,6 @@ const Profile = () => {
     });
   };
 
-  // Get initials from display_name
   const getInitials = (name: string | null) => {
     if (!name) return "";
     return name
@@ -73,13 +73,15 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4"
+    >
       <div className="container mx-auto max-w-4xl">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">My Profile</h1>
-          <Button variant="outline" onClick={handleSignOut}>
-            Sign Out
-          </Button>
         </div>
         
         <div className="space-y-6">
@@ -90,9 +92,9 @@ const Profile = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <div className="relative cursor-pointer group">
-                        <Avatar className="h-24 w-24">
+                        <Avatar className="h-24 w-24 bg-primary/10">
                           <AvatarImage src="/placeholder.svg" />
-                          <AvatarFallback>
+                          <AvatarFallback className="text-xl font-semibold text-primary">
                             {getInitials(profile?.first_name)}
                           </AvatarFallback>
                         </Avatar>
@@ -114,11 +116,11 @@ const Profile = () => {
                   </DropdownMenu>
                 </div>
                 
-                <div className="flex flex-col justify-center space-y-2">
+                <div className="flex flex-col space-y-1">
                   <h2 className="text-2xl font-bold">
                     {profile?.display_name}
                   </h2>
-                  <div className="inline-block w-fit px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
+                  <div className="inline-block w-fit px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                     {profile?.membership_status === 'active' ? 'Active' : profile?.membership_status || 'Active'}
                   </div>
                 </div>
@@ -131,25 +133,37 @@ const Profile = () => {
               <CardTitle className="text-lg">Membership Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 text-sm">
-                <div>
-                  <span className="font-semibold">Email:</span> {user.email}
+              <div className="space-y-5 text-sm">
+                <div className="flex items-center space-x-3">
+                  <Mail className="w-4 h-4 text-muted-foreground" />
+                  <span className="font-semibold">Email:</span>
+                  <span className="text-muted-foreground">{user.email}</span>
                 </div>
-                <div>
-                  <span className="font-semibold">Phone:</span>{" "}
-                  {profile?.phone_number || "Not provided"}
+                <div className="flex items-center space-x-3">
+                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <span className="font-semibold">Phone:</span>
+                  {profile?.phone_number ? (
+                    <span className="text-muted-foreground">{profile.phone_number}</span>
+                  ) : (
+                    <Button variant="ghost" size="sm" className="text-primary">
+                      <Plus className="w-4 h-4 mr-1" /> Add phone number
+                    </Button>
+                  )}
                 </div>
-                <div>
-                  <span className="font-semibold">Member Since:</span>{" "}
-                  {formatDate(profile?.membership_since)}
+                <div className="flex items-center space-x-3">
+                  <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                  <span className="font-semibold">Member Since:</span>
+                  <span className="text-muted-foreground">{formatDate(profile?.membership_since)}</span>
                 </div>
-                <div>
-                  <span className="font-semibold">Membership Type:</span>{" "}
-                  <span className="capitalize">{profile?.membership_type || "Basic"}</span>
+                <div className="flex items-center space-x-3">
+                  <span className="font-semibold ml-7">Membership Type:</span>
+                  <span className="text-muted-foreground capitalize">{profile?.membership_type || "Basic"}</span>
                 </div>
-                <div>
-                  <span className="font-semibold">Expiry Date:</span>{" "}
-                  {profile?.membership_expiry ? formatDate(profile.membership_expiry) : "Auto-renewal"}
+                <div className="flex items-center space-x-3">
+                  <span className="font-semibold ml-7">Expiry Date:</span>
+                  <span className="text-muted-foreground">
+                    {profile?.membership_expiry ? formatDate(profile.membership_expiry) : "Auto-renewal"}
+                  </span>
                 </div>
                 <div className="p-3 rounded-lg border-2 border-dashed flex items-center justify-between bg-muted/50">
                   <div>
@@ -170,9 +184,17 @@ const Profile = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Button 
+            variant="destructive" 
+            className="w-full"
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
