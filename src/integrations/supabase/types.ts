@@ -19,6 +19,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          last_qr_timestamp: string | null
           last_visit: string | null
           membership_expiry: string | null
           membership_since: string | null
@@ -39,6 +40,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          last_qr_timestamp?: string | null
           last_visit?: string | null
           membership_expiry?: string | null
           membership_since?: string | null
@@ -59,6 +61,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          last_qr_timestamp?: string | null
           last_visit?: string | null
           membership_expiry?: string | null
           membership_since?: string | null
