@@ -16,27 +16,29 @@ const BottomNav = () => {
     { label: "Profile", icon: UserCircle, path: "/profile" },
   ];
 
-  const handleNavigation = (path: string, label: string) => {
+  const handleNavigation = (path: string) => {
     navigate(path);
     if ("vibrate" in navigator) {
-      navigator.vibrate(50); // Add a slight vibration on mobile
+      navigator.vibrate(50); // Haptic feedback for mobile
     }
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 w-full border-t bg-background/90 backdrop-blur-lg shadow-lg z-50">
+    <div className="fixed bottom-0 left-0 right-0 w-full border-t bg-background/90 backdrop-blur-md shadow-lg z-50">
       <nav className="flex justify-around items-center h-16 mx-auto px-4">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <button
               key={item.path}
-              onClick={() => handleNavigation(item.path, item.label)}
+              onClick={() => handleNavigation(item.path)}
               onMouseEnter={() => setTooltip(item.label)}
               onMouseLeave={() => setTooltip(null)}
               className={cn(
-                "relative flex flex-col items-center justify-center w-20 h-full p-2 rounded-lg transition-all",
-                isActive ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                "relative flex flex-col items-center justify-center w-20 h-full p-2 rounded-xl transition-all",
+                isActive
+                  ? "bg-background shadow-md text-primary font-bold scale-105"
+                  : "text-muted-foreground opacity-70 hover:opacity-100"
               )}
             >
               <item.icon className="h-6 w-6 mb-1 transition-all" />
