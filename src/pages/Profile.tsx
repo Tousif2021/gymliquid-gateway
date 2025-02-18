@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LockIcon, Camera, Trash2, CreditCard, Mail, Phone, CalendarDays, Plus } from "lucide-react";
+import { LockIcon, Camera, Trash2, CreditCard, Mail, Phone, CalendarDays } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -120,7 +119,7 @@ const Profile = () => {
                   <h2 className="text-2xl font-bold">
                     {profile?.display_name}
                   </h2>
-                  <div className="inline-block w-fit px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                  <div className="inline-block w-fit px-3 py-1 rounded-full bg-[#F2FCE2] text-[#4CAF50] text-sm font-medium">
                     {profile?.membership_status === 'active' ? 'Active' : profile?.membership_status || 'Active'}
                   </div>
                 </div>
@@ -142,13 +141,9 @@ const Profile = () => {
                 <div className="flex items-center space-x-3">
                   <Phone className="w-4 h-4 text-muted-foreground" />
                   <span className="font-semibold">Phone:</span>
-                  {profile?.phone_number ? (
-                    <span className="text-muted-foreground">{profile.phone_number}</span>
-                  ) : (
-                    <Button variant="ghost" size="sm" className="text-primary">
-                      <Plus className="w-4 h-4 mr-1" /> Add phone number
-                    </Button>
-                  )}
+                  <span className="text-muted-foreground">
+                    {profile?.phone_number || "Not provided"}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CalendarDays className="w-4 h-4 text-muted-foreground" />
@@ -186,8 +181,7 @@ const Profile = () => {
           </Card>
 
           <Button 
-            variant="destructive" 
-            className="w-full"
+            className="w-full bg-[#ea384c] hover:bg-[#ea384c]/90 text-white"
             onClick={handleSignOut}
           >
             Sign Out
