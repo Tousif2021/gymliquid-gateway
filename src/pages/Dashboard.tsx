@@ -1,10 +1,14 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
-import { QrCode as QrCodeIcon, Calendar as CalendarIcon, BarChart as BarChartIcon, Dumbbell } from "lucide-react";
+import { 
+  QrCode as QrCodeIcon, 
+  Calendar as CalendarIcon, 
+  BarChart2 as BarChartIcon, 
+  Dumbbell 
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format } from "date-fns";
@@ -54,7 +58,7 @@ const Dashboard = () => {
     {
       title: "Track Progress",
       description: "Monitor your gym visits and achievements",
-      icon: BarChart,
+      icon: BarChartIcon,
       onClick: () => navigate("/track-progress"),
     },
   ];
