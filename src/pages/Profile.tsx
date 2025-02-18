@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LockIcon, Camera, Trash2, CreditCard, Mail, Phone, CalendarDays } from "lucide-react";
+import { LockIcon, Camera, Trash2, CreditCard } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -134,28 +134,25 @@ const Profile = () => {
             <CardContent>
               <div className="space-y-5 text-sm">
                 <div className="flex items-center space-x-3">
-                  <Mail className="w-4 h-4 text-muted-foreground" />
                   <span className="font-semibold">Email:</span>
                   <span className="text-muted-foreground">{user.email}</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
                   <span className="font-semibold">Phone:</span>
                   <span className="text-muted-foreground">
                     {profile?.phone_number || "Not provided"}
                   </span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <CalendarDays className="w-4 h-4 text-muted-foreground" />
                   <span className="font-semibold">Member Since:</span>
                   <span className="text-muted-foreground">{formatDate(profile?.membership_since)}</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <span className="font-semibold ml-7">Membership Type:</span>
+                  <span className="font-semibold">Membership Type:</span>
                   <span className="text-muted-foreground capitalize">{profile?.membership_type || "Basic"}</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <span className="font-semibold ml-7">Expiry Date:</span>
+                  <span className="font-semibold">Expiry Date:</span>
                   <span className="text-muted-foreground">
                     {profile?.membership_expiry ? formatDate(profile.membership_expiry) : "Auto-renewal"}
                   </span>
