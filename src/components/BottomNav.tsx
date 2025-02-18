@@ -1,65 +1,60 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, QrCode, Calendar, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [tooltip, setTooltip] = useState<string | null>(null);
 
   const navItems = [
-    {
-      label: "Home",
-      icon: Home,
-      path: "/dashboard",
-    },
-    {
-      label: "Digital Pass",
-      icon: QrCode,
-      path: "/scanner",
-    },
-    {
-      label: "Classes",
-      icon: Calendar,
-      path: "/classes",
-    },
-    {
-      label: "Profile",
-      icon: UserCircle,
-      path: "/profile",
-    },
+    { label: "Home", icon: Home, path: "/dashboard" },
+    { label: "Digital Pass", icon: QrCode, path: "/scanner" },
+    { label: "Classes", icon: Calendar, path: "/classes" },
+    { label: "Profile", icon: UserCircle, path: "/profile" },
   ];
 
+  const handleNavigation = (path: string, label: string) => {
+    navigate(path);
+    if ("vibrate" in navigator) {
+      navigator.vibrate(50); // Add a slight vibration on mobile
+    }
+  };
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t bg-background/80 backdrop-blur-lg shadow-lg">
-      <nav className="flex justify-around items-center h-16 max-w-md mx-auto px-4">
+    <div className="fixed bottom-0 left-0 right-0 w-full border-t bg-background/90 backdrop-blur-lg shadow-lg z-50">
+      <nav className="flex justify-around items-center h-16 mx-auto px-4">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <button
               key={item.path}
-              onClick={() => navigate(item.path)}
+              onClick={() => handleNavigation(item.path, item.label)}
+              onMouseEnter={() => setTooltip(item.label)}
+              onMouseLeave={() => setTooltip(null)}
               className={cn(
-                "flex flex-col items-center justify-center w-16 h-full relative",
-                "text-muted-foreground hover:text-primary transition-colors",
-                isActive && "text-primary"
+                "relative flex flex-col items-center justify-center w-20 h-full p-2 rounded-lg transition-all",
+                isActive ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:text-primary"
               )}
             >
-              <item.icon className="h-5 w-5 mb-1" />
-              <span className={cn(
-                "text-xs transition-all",
-                isActive ? "font-bold" : "font-medium"
-              )}>
-                {item.label}
-              </span>
+              <item.icon className="h-6 w-6 mb-1 transition-all" />
+              <span className="text-xs">{item.label}</span>
+
               {isActive && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute -bottom-0 left-0 right-0 h-0.5 bg-primary"
+                  className="absolute -bottom-1 left-0 right-0 h-1 bg-primary rounded-full"
                   initial={false}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                 />
+              )}
+
+              {tooltip === item.label && (
+                <div className="absolute bottom-14 bg-black text-white text-xs px-2 py-1 rounded-md shadow-md">
+                  {item.label}
+                </div>
               )}
             </button>
           );
