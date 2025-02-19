@@ -5,12 +5,17 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
+const navItems = [
+  { label: "Home", icon: Home, path: "/dashboard" },
+  { label: "Digital Pass", icon: QrCode, path: "/scanner" },
+  { label: "Classes", icon: Calendar, path: "/classes" },
+  { label: "Profile", icon: UserCircle, path: "/profile" }
+];
+
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [tooltip, setTooltip] = useState<string | null>(null);
-
-  
 
   const handleNavigation = (path: string) => {
     navigate(path);
