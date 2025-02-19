@@ -33,8 +33,8 @@ const BottomNav = () => {
             <motion.button
               key={item.path}
               onClick={() => handleNavigation(item.path)}
-              onMouseEnter={() => setTooltip(item.label)}
-              onMouseLeave={() => setTooltip(null)}
+             // onMouseEnter={() => setTooltip(item.label)}
+            //  onMouseLeave={() => setTooltip(null)}
               whileTap={{ scale: 0.95 }}
               className={cn(
                 "relative flex flex-col items-center justify-center w-16 h-full p-2 transition-all duration-200",
@@ -58,11 +58,11 @@ const BottomNav = () => {
                 />
               )}
 
-              {tooltip === item.label && (
+              {/*tooltip === item.label && (
                 <div className="absolute -top-8 px-2 py-1 bg-primary/5 backdrop-blur-sm border-t border-primary/10 text-xs font-medium shadow-lg">
                   {item.label}
                 </div>
-              )}
+              )*/}
             </motion.button>
           );
         })}
