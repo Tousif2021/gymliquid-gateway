@@ -59,7 +59,7 @@ const BottomNav = () => {
               )}
 
               {tooltip === item.label && (
-                <div className="absolute -top-8 px-2 py-1 bg-background/80 backdrop-blur-sm border border-border rounded text-xs font-medium shadow-lg">
+                <div className="absolute -top-8 px-2 py-1 bg-primary/5 backdrop-blur-sm border-t border-primary/10 text-xs font-medium shadow-lg">
                   {item.label}
                 </div>
               )}
