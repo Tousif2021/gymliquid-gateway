@@ -37,7 +37,7 @@ const BottomNav = () => {
               onMouseLeave={() => setTooltip(null)}
               whileTap={{ scale: 0.95 }}
               className={cn(
-                "relative flex flex-col items-center justify-center w-16 h-full p-2 rounded-xl transition-all duration-200",
+                "relative flex flex-col items-center justify-center w-16 h-full p-2 transition-all duration-200",
                 isActive
                   ? "bg-primary/10 text-primary font-bold scale-105"
                   : "text-muted-foreground hover:text-primary"
