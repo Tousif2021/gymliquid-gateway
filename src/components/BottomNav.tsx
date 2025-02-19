@@ -10,12 +10,7 @@ const BottomNav = () => {
   const location = useLocation();
   const [tooltip, setTooltip] = useState<string | null>(null);
 
-  const navItems = [
-    { icon: Home, path: "/dashboard" },
-    { label: "Digital Pass", icon: QrCode, path: "/scanner" },
-    { label: "Classes", icon: Calendar, path: "/classes" },
-    { label: "Profile", icon: UserCircle, path: "/profile" },
-  ];
+  
 
   const handleNavigation = (path: string) => {
     navigate(path);
