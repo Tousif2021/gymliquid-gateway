@@ -1,3 +1,4 @@
+
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, QrCode, Calendar, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,46 +20,51 @@ const BottomNav = () => {
   const handleNavigation = (path: string) => {
     navigate(path);
     if ("vibrate" in navigator) {
-      navigator.vibrate(50); // Haptic feedback for mobile
+      navigator.vibrate(50);
     }
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 w-full border-t bg-background/90 backdrop-blur-md shadow-lg z-50">
-      <nav className="flex justify-around items-center h-16 mx-auto px-4">
+    <div className="fixed bottom-0 left-0 right-0 w-full glass-nav border-t border-white/10 bg-background/60 backdrop-blur-xl shadow-lg z-50">
+      <nav className="flex justify-around items-center h-16 mx-auto px-4 max-w-2xl">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <button
+            <motion.button
               key={item.path}
               onClick={() => handleNavigation(item.path)}
               onMouseEnter={() => setTooltip(item.label)}
               onMouseLeave={() => setTooltip(null)}
+              whileTap={{ scale: 0.95 }}
               className={cn(
-                "relative flex flex-col items-center justify-center w-20 h-full p-2 rounded-xl transition-all",
+                "relative flex flex-col items-center justify-center w-20 h-full p-2 rounded-xl transition-all duration-200",
                 isActive
-                  ? "bg-background shadow-md text-primary font-bold scale-105"
-                  : "text-muted-foreground opacity-70 hover:opacity-100"
+                  ? "bg-primary/10 text-primary font-bold scale-105"
+                  : "text-muted-foreground hover:text-primary"
               )}
             >
-              <item.icon className="h-6 w-6 mb-1 transition-all" />
-              <span className="text-xs">{item.label}</span>
+              <item.icon className="h-5 w-5 mb-1 transition-all" />
+              <span className="text-xs font-medium">{item.label}</span>
 
               {isActive && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute -bottom-1 left-0 right-0 h-1 bg-primary rounded-full"
+                  className="absolute -bottom-[1px] left-0 right-0 h-[2px] bg-primary"
                   initial={false}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 30
+                  }}
                 />
               )}
 
               {tooltip === item.label && (
-                <div className="absolute bottom-14 bg-black text-white text-xs px-2 py-1 rounded-md shadow-md">
+                <div className="absolute -top-8 px-2 py-1 bg-background/80 backdrop-blur-sm border border-border rounded text-xs font-medium shadow-lg">
                   {item.label}
                 </div>
               )}
-            </button>
+            </motion.button>
           );
         })}
       </nav>
