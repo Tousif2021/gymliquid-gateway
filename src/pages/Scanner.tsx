@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QrCode, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -10,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const Scanner = () => {
   const { user, loading } = useAuth();
