@@ -15,11 +15,11 @@ import Admin from "./pages/Admin";
 import Scanner from "./pages/Scanner";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import FitAdvisor from "./pages/FitAdvisor";
 import BottomNav from "./components/BottomNav";
 import { useLocation } from "react-router-dom";
 import TrackProgress from "./pages/TrackProgress";
 
-// Wrapper component to handle the bottom navigation visibility
 const AppContent = () => {
   const location = useLocation();
   const showBottomNav = !["/", "/auth"].includes(location.pathname);
@@ -34,6 +34,7 @@ const AppContent = () => {
         <Route path="/classes" element={<Classes />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/scanner" element={<Scanner />} />
+        <Route path="/fitadvisor" element={<FitAdvisor />} />
         <Route path="/track-progress" element={<TrackProgress />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

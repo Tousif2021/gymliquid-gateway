@@ -1,6 +1,6 @@
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, QrCode, Calendar, UserCircle } from "lucide-react";
+import { Home, QrCode, Calendar, UserCircle, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -9,6 +9,7 @@ const navItems = [
   { label: "Home", icon: Home, path: "/dashboard" },
   { label: "Digital Pass", icon: QrCode, path: "/scanner" },
   { label: "Classes", icon: Calendar, path: "/classes" },
+  { label: "FitAdvisor", icon: Activity, path: "/fitadvisor" },
   { label: "Profile", icon: UserCircle, path: "/profile" }
 ];
 
@@ -33,8 +34,6 @@ const BottomNav = () => {
             <motion.button
               key={item.path}
               onClick={() => handleNavigation(item.path)}
-             // onMouseEnter={() => setTooltip(item.label)}
-            //  onMouseLeave={() => setTooltip(null)}
               whileTap={{ scale: 0.95 }}
               className={cn(
                 "relative flex flex-col items-center justify-center w-16 h-full p-2 transition-all duration-200",
@@ -57,12 +56,6 @@ const BottomNav = () => {
                   }}
                 />
               )}
-
-              {/*tooltip === item.label && (
-                <div className="absolute -top-8 px-2 py-1 bg-primary/5 backdrop-blur-sm border-t border-primary/10 text-xs font-medium shadow-lg">
-                  {item.label}
-                </div>
-              )*/}
             </motion.button>
           );
         })}

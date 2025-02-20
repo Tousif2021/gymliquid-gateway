@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bmi_records: {
+        Row: {
+          bmi: number
+          created_at: string | null
+          height: number
+          id: string
+          notes: string | null
+          unit_system: string
+          user_id: string
+          weight: number
+        }
+        Insert: {
+          bmi: number
+          created_at?: string | null
+          height: number
+          id?: string
+          notes?: string | null
+          unit_system: string
+          user_id: string
+          weight: number
+        }
+        Update: {
+          bmi?: number
+          created_at?: string | null
+          height?: number
+          id?: string
+          notes?: string | null
+          unit_system?: string
+          user_id?: string
+          weight?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           average_visit_duration: number | null
