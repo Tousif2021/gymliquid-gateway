@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CalendarDays, Clock, Dumbbell, Flame } from "lucide-react";
+import { CalendarDays, Clock, Dumbbell, Flame, Scale } from "lucide-react";
 
 const TrackProgress = () => {
   const { user, loading } = useAuth();
@@ -32,6 +32,29 @@ const TrackProgress = () => {
     enabled: !!user,
   });
 
+  const { data: latestBMI } = useQuery({
+    queryKey: ["latest-bmi", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bmi_records")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const getBMICategory = (bmi: number) => {
+    if (bmi < 18.5) return { category: "Underweight", color: "text-blue-500", bg: "bg-blue-50" };
+    if (bmi < 25) return { category: "Normal", color: "text-green-500", bg: "bg-green-50" };
+    if (bmi < 30) return { category: "Overweight", color: "text-orange-500", bg: "bg-orange-50" };
+    return { category: "Obese", color: "text-red-500", bg: "bg-red-50" };
+  };
+
   if (loading || !profile) {
     return <div>Loading...</div>;
   }
@@ -42,6 +65,42 @@ const TrackProgress = () => {
         <h1 className="text-3xl font-bold mb-6">Gym Activity & Progress</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center">
+                <Scale className="w-5 h-5 mr-2" />
+                BMI Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {latestBMI ? (
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Current BMI</p>
+                    <p className="text-2xl font-bold">{latestBMI.bmi.toFixed(1)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Status</p>
+                    <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                      getBMICategory(latestBMI.bmi).color} ${getBMICategory(latestBMI.bmi).bg}`}>
+                      {getBMICategory(latestBMI.bmi).category}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Last Updated</p>
+                    <p className="font-medium">
+                      {new Date(latestBMI.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-muted-foreground text-sm">
+                  No BMI records yet. Visit FitAdvisor to calculate your BMI.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center">
