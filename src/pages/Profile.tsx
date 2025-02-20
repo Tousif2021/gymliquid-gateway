@@ -72,6 +72,33 @@ const Profile = () => {
       .join("")
       .toUpperCase();
   };
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  if (!event.target.files || event.target.files.length === 0) return;
+
+  const file = event.target.files[0];
+  const fileUrl = URL.createObjectURL(file); // Temporary preview
+
+  // Update the avatar image immediately
+  setProfileImage(fileUrl);
+
+  // Upload to Supabase storage (optional)
+  const { data, error } = await supabase.storage
+    .from("avatars")
+    .upload(`profile_${user.id}`, file, { upsert: true });
+
+  if (error) {
+    console.error("Image upload failed:", error);
+  } else {
+    const publicUrl = supabase.storage.from("avatars").getPublicUrl(data.path);
+    await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
+  }
+};
+const [profileImage, setProfileImage] = useState(profile?.avatar_url);
+const handleRemovePhoto = async () => {
+  setProfileImage(null); // Remove preview
+  await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
+};
+
 
   return (
     <motion.div 
@@ -107,7 +134,7 @@ const Profile = () => {
                     <DropdownMenuTrigger asChild>
                       <div className="relative cursor-pointer group">
                         <Avatar className="h-24 w-24 bg-primary/10">
-                          <AvatarImage src="/public/placeholder.svg" />
+                          <AvatarImage src={profileImage || profile?.avatar_url || "/public/placeholder.svg"} />
                           <AvatarFallback className="text-xl font-semibold text-primary">
                             {getInitials(profile?.first_name)}
                           </AvatarFallback>
@@ -118,14 +145,25 @@ const Profile = () => {
                       </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem>
-                        <Camera className="mr-2 h-4 w-4" />
-                        Change Photo
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive">
+                      <DropdownMenuItem asChild>
+                          <label htmlFor="profile-image-upload" className="flex items-center cursor-pointer">
+                            <Camera className="mr-2 h-4 w-4" />
+                            Change Photo
+                            <input
+                              id="profile-image-upload"
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleImageUpload}
+                            />
+                          </label>
+                        </DropdownMenuItem>
+
+                      <DropdownMenuItem onClick={handleRemovePhoto} className="text-destructive">
                         <Trash2 className="mr-2 h-4 w-4" />
                         Remove Photo
                       </DropdownMenuItem>
+
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
