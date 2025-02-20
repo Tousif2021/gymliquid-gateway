@@ -107,7 +107,7 @@ const Profile = () => {
                     <DropdownMenuTrigger asChild>
                       <div className="relative cursor-pointer group">
                         <Avatar className="h-24 w-24 bg-primary/10">
-                          <AvatarImage src="/placeholder.svg" />
+                          <AvatarImage src="/public/placeholder.svg" />
                           <AvatarFallback className="text-xl font-semibold text-primary">
                             {getInitials(profile?.first_name)}
                           </AvatarFallback>
