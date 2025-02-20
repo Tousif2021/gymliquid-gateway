@@ -81,19 +81,20 @@ const Profile = () => {
       className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4"
     >
       <div className="container mx-auto max-w-4xl">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 sticky top-0 bg-background/80 backdrop-blur-sm p-4 rounded-lg z-50">
           <h1 className="text-3xl font-bold">My Profile</h1>
           <Button
             variant="outline"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="rounded-full"
+            className="rounded-full hover:bg-accent"
           >
             {theme === "dark" ? (
               <Sun className="h-5 w-5" />
             ) : (
               <Moon className="h-5 w-5" />
             )}
+            <span className="sr-only">Toggle theme</span>
           </Button>
         </div>
         
