@@ -30,8 +30,8 @@
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    --card: 217 32.6% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: 217 32.6% 12%;
+    --card-foreground: 210 45% 99%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
     --primary: 217.2 91.2% 59.8%;
@@ -67,6 +67,13 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+  .dark h1, .dark h2, .dark h3, .dark .component-title {
+    @apply text-slate-50 font-semibold;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  .dark .card-title {
+    @apply text-slate-100 font-medium;
   }
 }
 
