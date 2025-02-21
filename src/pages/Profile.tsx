@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { toast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input"; // Import Input component
 
 
 const Profile = () => {
@@ -209,6 +210,27 @@ const handleRemovePhoto = async () => {
                     {profile?.phone_number || "Not provided"}
                   </span>
                 </div>
+                {!profile?.phone_number && (
+                  <Input
+                    type="tel"
+                    placeholder="Add phone number"
+                    className="mt-2"
+                    onBlur={async (e) => {
+                      if (!e.target.value) return;
+                      const { error } = await supabase
+                        .from('profiles')
+                        .update({ phone_number: e.target.value })
+                        .eq('id', profile.id);
+                      if (error) {
+                        toast({
+                          title: "Error",
+                          description: "Failed to update phone number",
+                          variant: "destructive"
+                        });
+                      }
+                    }}
+                  />
+                )}
                 <div className="flex items-center space-x-3">
                   <Calendar className="h-4 w-4" /> {/* Added icon */}
                   <span className="font-semibold">Member Since:</span>
@@ -244,9 +266,7 @@ const handleRemovePhoto = async () => {
                   </div>
                   <CreditCard className="text-muted-foreground h-4 w-4" />
                 </div>
-                {profile?.payment_method ? null : (
-                  <Button className="w-full bg-blue-500 hover:bg-blue-700 text-white">Set Up Now</Button>
-                )} {/* Added Set Up Now button */}
+                {/* Removed Set Up Now button */}
               </div>
             </CardContent>
           </Card>
