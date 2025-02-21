@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -105,14 +106,24 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="relative mb-8">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative mb-8"
+        >
           <h1 className="text-6xl font-black text-center py-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-primary to-blue-400 dark:from-blue-400 dark:via-blue-500 dark:to-primary tracking-tight">
             XYZ 24/7 GYM
           </h1>
           <div className="absolute -skew-y-3 -z-10 inset-0 bg-gradient-to-r from-blue-500/10 via-primary/10 to-blue-400/10 dark:from-blue-400/20 dark:via-blue-500/20 dark:to-primary/20 blur-xl"></div>
-        </div>
+        </motion.div>
 
-        <div className="mb-6 p-4 glass-card rounded-lg">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mb-6 p-4 glass-card rounded-lg"
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-medium">{weather.temp}°C - {weather.condition}</p>
