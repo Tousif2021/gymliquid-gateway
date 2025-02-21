@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -16,12 +16,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 
-import { useState } from "react";
 
 const Profile = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+  const [profileImage, setProfileImage] = useState(null); // Initialize state here
 
   useEffect(() => {
     if (!loading && !user) {
@@ -95,7 +95,7 @@ const Profile = () => {
     await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
   }
 };
-const [profileImage, setProfileImage] = useState(profile?.avatar_url);
+
 const handleRemovePhoto = async () => {
   setProfileImage(null); // Remove preview
   await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
@@ -126,7 +126,7 @@ const handleRemovePhoto = async () => {
             <span className="sr-only">Toggle theme</span>
           </Button>
         </div>
-        
+
         <div className="space-y-6">
           <Card>
             <CardContent className="pt-6">
@@ -169,7 +169,7 @@ const handleRemovePhoto = async () => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                
+
                 <div className="flex flex-col space-y-1">
                   <h2 className="text-2xl font-bold">
                     {profile?.display_name}
