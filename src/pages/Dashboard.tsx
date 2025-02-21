@@ -130,16 +130,6 @@ const Dashboard = () => {
             </div>
           </div>
         </motion.div>
-        <motion.div className="container mx-auto px-4">
-          <motion.h1 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-6xl font-black tracking-tighter text-center bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent [text-shadow:_4px_4px_8px_rgb(0_0_0_/_40%)] uppercase relative"
-          >
-            <span className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent blur-xl"></span>
-            XYZ - 24/7 - FITNESS CENTER
-          </motion.h1>
-        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: -20 }}
