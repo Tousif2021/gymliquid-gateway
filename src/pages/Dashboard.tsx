@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,6 +17,31 @@ import { NutritionCarousel } from "@/components/ui/NutritionCarousel"; // Import
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [weather, setWeather] = useState({ temp: 0, condition: '' });
+
+  useEffect(() => {
+    // Get user location and fetch weather
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_KEY}&units=metric`
+      );
+      const data = await response.json();
+      setWeather({
+        temp: Math.round(data.main.temp),
+        condition: data.weather[0].main
+      });
+    });
+  }, []);
+
+  const getMotivationalMessage = () => {
+    if (weather.temp < 10) {
+      return "❄️ Cold outside? The gym is warm and waiting for you! Let's crush those goals!";
+    } else if (weather.temp > 25) {
+      return "🌞 Hot day? Our air-conditioned gym is the perfect place to stay fit!";
+    }
+    return "🎯 Perfect weather for a perfect workout! See you at the gym!";
+  };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -78,7 +103,16 @@ const Dashboard = () => {
   const greeting = "Welcome"; //Added greeting variable
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
+      <div className="container mx-auto max-w-4xl">
+        <div className="mb-6 p-4 glass-card rounded-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-lg font-medium">{weather.temp}°C - {weather.condition}</p>
+              <p className="text-sm text-muted-foreground mt-1">{getMotivationalMessage()}</p>
+            </div>
+          </div>
+        </div>
       <div className="w-full bg-gradient-to-r from-black via-black/95 to-black/90 border-b border-primary/20 shadow-xl">
         <div className="container mx-auto px-4 py-8">
           <motion.h1 
@@ -91,8 +125,7 @@ const Dashboard = () => {
           </motion.h1>
         </div>
       </div>
-      
-      <div className="container mx-auto max-w-4xl p-4">
+
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -189,7 +189,7 @@ const handleRemovePhoto = async () => {
                 </div>
 
                 <div className="flex flex-col space-y-1">
-                  <h2 className="text-2xl font-bold">
+                  <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                     {profile?.display_name}
                   </h2>
                   <div className="inline-block w-fit px-3 py-1 rounded-full bg-[#F2FCE2] text-[#4CAF50] text-sm font-medium">
