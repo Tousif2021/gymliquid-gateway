@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 
+import { useState } from "react";
+
 const Profile = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
