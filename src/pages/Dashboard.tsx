@@ -69,7 +69,7 @@ const Dashboard = () => {
     return formatDistanceToNow(new Date(date), { addSuffix: true });
   };
 
-  const greeting = "Welcome!"; //Added greeting variable
+  const greeting = "Welcome"; //Added greeting variable
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
