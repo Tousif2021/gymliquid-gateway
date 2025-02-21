@@ -229,25 +229,39 @@ const handleRemovePhoto = async () => {
                         <DialogHeader>
                           <DialogTitle>Add Phone Number</DialogTitle>
                         </DialogHeader>
-                        <Input
-                          type="tel"
-                          placeholder="Enter phone number"
-                          onKeyDown={async (e) => {
-                            if (e.key === 'Enter') {
-                              const { error } = await supabase
-                                .from('profiles')
-                                .update({ phone_number: e.currentTarget.value })
-                                .eq('id', profile.id);
-                              if (error) {
-                                toast({
-                                  title: "Error",
-                                  description: "Failed to update phone number",
-                                  variant: "destructive"
-                                });
-                              }
-                            }
-                          }}
-                        />
+                        <div className="space-y-4">
+                          <Input
+                            type="tel"
+                            placeholder="Enter phone number"
+                            id="phone-input"
+                          />
+                          <DialogFooter>
+                            <Button 
+                              onClick={async () => {
+                                const phoneInput = document.getElementById('phone-input') as HTMLInputElement;
+                                const { error } = await supabase
+                                  .from('profiles')
+                                  .update({ phone_number: phoneInput.value })
+                                  .eq('id', profile.id);
+                                if (error) {
+                                  toast({
+                                    title: "Error",
+                                    description: "Failed to update phone number",
+                                    variant: "destructive"
+                                  });
+                                } else {
+                                  toast({
+                                    title: "Success",
+                                    description: "Phone number updated successfully"
+                                  });
+                                  window.location.reload();
+                                }
+                              }}
+                            >
+                              Save
+                            </Button>
+                          </DialogFooter>
+                        </div>
                       </DialogContent>
                     </Dialog>
                   )}
