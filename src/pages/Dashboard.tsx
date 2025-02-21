@@ -45,6 +45,12 @@ const Dashboard = () => {
 
   const features = [
     {
+      title: "Workout Plans",
+      description: "Create and manage your custom workout routines",
+      icon: Dumbbell,
+      onClick: () => navigate("/workout-plan"),
+    },
+    {
       title: "Digital Membership",
       description: "Access your membership card and QR code instantly",
       icon: QrCodeIcon,

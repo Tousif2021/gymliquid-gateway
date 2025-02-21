@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +18,7 @@ import FitAdvisor from "./pages/FitAdvisor";
 import BottomNav from "./components/BottomNav";
 import { useLocation } from "react-router-dom";
 import TrackProgress from "./pages/TrackProgress";
+import WorkoutPlan from "@/pages/WorkoutPlan";
 
 const AppContent = () => {
   const location = useLocation();
@@ -31,6 +31,7 @@ const AppContent = () => {
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/workout-plan" element={<WorkoutPlan />} />
         <Route path="/classes" element={<Classes />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/scanner" element={<Scanner />} />
