@@ -203,34 +203,48 @@ const handleRemovePhoto = async () => {
                   <span className="font-semibold">Email:</span>
                   <span className="text-muted-foreground">{user.email}</span>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-4 w-4" /> {/* Added icon */}
-                  <span className="font-semibold">Phone:</span>
-                  <span className="text-muted-foreground">
-                    {profile?.phone_number || "Not provided"}
-                  </span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Phone className="h-4 w-4" />
+                    <span className="font-semibold">Phone:</span>
+                    <span className="text-muted-foreground">
+                      {profile?.phone_number || "Not provided"}
+                    </span>
+                  </div>
+                  {!profile?.phone_number && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          Add
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Add Phone Number</DialogTitle>
+                        </DialogHeader>
+                        <Input
+                          type="tel"
+                          placeholder="Enter phone number"
+                          onKeyDown={async (e) => {
+                            if (e.key === 'Enter') {
+                              const { error } = await supabase
+                                .from('profiles')
+                                .update({ phone_number: e.currentTarget.value })
+                                .eq('id', profile.id);
+                              if (error) {
+                                toast({
+                                  title: "Error",
+                                  description: "Failed to update phone number",
+                                  variant: "destructive"
+                                });
+                              }
+                            }
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </div>
-                {!profile?.phone_number && (
-                  <Input
-                    type="tel"
-                    placeholder="Add phone number"
-                    className="mt-2"
-                    onBlur={async (e) => {
-                      if (!e.target.value) return;
-                      const { error } = await supabase
-                        .from('profiles')
-                        .update({ phone_number: e.target.value })
-                        .eq('id', profile.id);
-                      if (error) {
-                        toast({
-                          title: "Error",
-                          description: "Failed to update phone number",
-                          variant: "destructive"
-                        });
-                      }
-                    }}
-                  />
-                )}
                 <div className="flex items-center space-x-3">
                   <Calendar className="h-4 w-4" /> {/* Added icon */}
                   <span className="font-semibold">Member Since:</span>
