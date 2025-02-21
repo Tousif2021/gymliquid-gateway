@@ -69,82 +69,99 @@ const Dashboard = () => {
     return formatDistanceToNow(new Date(date), { addSuffix: true });
   };
 
+  const greeting = "Welcome!"; //Added greeting variable
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5">
-      <div className="w-full bg-primary/5 border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              XYZ - 24/7 - FITNESS CENTER
-            </h1>
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
+      <div className="container mx-auto max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-8 p-6 rounded-lg bg-gradient-to-r from-primary/10 via-primary/5 to-transparent backdrop-blur-sm"
+        >
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            {greeting},
+          </h2>
+          <p className="text-2xl mt-2 text-muted-foreground font-medium">
+            {profile?.display_name || user?.email}
+          </p>
+        </motion.div>
+        <div className="w-full bg-primary/5 border-b">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                XYZ - 24/7 - FITNESS CENTER
+              </h1>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-2">
-            Welcome back{profile?.display_name ? `, ${profile.display_name}` : '!'}
-          </h2>
-          <p className="text-muted-foreground">Here's your fitness overview</p>
-        </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-2">
+              Welcome back{profile?.display_name ? `, ${profile.display_name}` : '!'}
+            </h2>
+            <p className="text-muted-foreground">Here's your fitness overview</p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="p-4 flex items-center space-x-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Dumbbell className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Last Visit</p>
-              <p className="font-medium">{formatLastVisit(profile?.last_visit)}</p>
-            </div>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <Card className="p-4 flex items-center space-x-4">
+              <div className="p-3 bg-primary/10 rounded-full">
+                <Dumbbell className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Last Visit</p>
+                <p className="font-medium">{formatLastVisit(profile?.last_visit)}</p>
+              </div>
+            </Card>
 
-          <Card className="p-4 flex items-center space-x-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <BarChartIcon className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">This Month's Visits</p>
-              <p className="font-medium">{profile?.visits_this_month || 0} visits</p>
-            </div>
-          </Card>
+            <Card className="p-4 flex items-center space-x-4">
+              <div className="p-3 bg-primary/10 rounded-full">
+                <BarChartIcon className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">This Month's Visits</p>
+                <p className="font-medium">{profile?.visits_this_month || 0} visits</p>
+              </div>
+            </Card>
 
-          <Card className="p-4 flex items-center space-x-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <CalendarIcon className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Next Class</p>
-              <p className="font-medium">Yoga - {format(new Date(), "MMM dd, hh:mm a")}</p>
-            </div>
-          </Card>
-        </div>
+            <Card className="p-4 flex items-center space-x-4">
+              <div className="p-3 bg-primary/10 rounded-full">
+                <CalendarIcon className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Next Class</p>
+                <p className="font-medium">Yoga - {format(new Date(), "MMM dd, hh:mm a")}</p>
+              </div>
+            </Card>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Card
-                className="p-6 cursor-pointer hover:shadow-lg transition-all"
-                onClick={feature.onClick}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <feature.icon className="w-12 h-12 text-primary mb-4" />
-                <h3 className="text-xl font-semibold text-primary mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </Card>
-            </motion.div>
-          ))}
+                <Card
+                  className="p-6 cursor-pointer hover:shadow-lg transition-all"
+                  onClick={feature.onClick}
+                >
+                  <feature.icon className="w-12 h-12 text-primary mb-4" />
+                  <h3 className="text-xl font-semibold text-primary mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-8">
+            <NutritionCarousel />
+          </div> {/* Add NutritionCarousel component */}
         </div>
-        <div className="mt-8">
-          <NutritionCarousel />
-        </div> {/* Add NutritionCarousel component */}
       </div>
     </div>
   );
