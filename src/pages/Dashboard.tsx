@@ -142,7 +142,9 @@ const Dashboard = () => {
             </motion.div>
           ))}
         </div>
-        <NutritionCarousel /> {/* Add NutritionCarousel component */}
+        <div className="mt-8">
+          <NutritionCarousel />
+        </div> {/* Add NutritionCarousel component */}
       </div>
     </div>
   );
