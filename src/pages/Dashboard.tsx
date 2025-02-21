@@ -12,6 +12,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format } from "date-fns";
+import { NutritionCarousel } from "@/components/ui/NutritionCarousel"; // Import NutritionCarousel
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -141,6 +142,7 @@ const Dashboard = () => {
             </motion.div>
           ))}
         </div>
+        <NutritionCarousel /> {/* Add NutritionCarousel component */}
       </div>
     </div>
   );
