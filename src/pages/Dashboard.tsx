@@ -129,8 +129,8 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground mt-1">{getMotivationalMessage()}</p>
             </div>
           </div>
-        </div>
-      <motion.div className="container mx-auto px-4">
+        </motion.div>
+        <motion.div className="container mx-auto px-4">
           <motion.h1 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -139,8 +139,7 @@ const Dashboard = () => {
             <span className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent blur-xl"></span>
             XYZ - 24/7 - FITNESS CENTER
           </motion.h1>
-        </div>
-      </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: -20 }}
