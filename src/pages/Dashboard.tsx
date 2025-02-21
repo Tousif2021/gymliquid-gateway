@@ -73,11 +73,16 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5">
-      <div className="w-full bg-black/90 border-b border-primary/20 shadow-lg">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-5xl font-black tracking-tighter text-center bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent [text-shadow:_2px_2px_2px_rgb(0_0_0_/_20%)] uppercase">
+      <div className="w-full bg-gradient-to-r from-black via-black/95 to-black/90 border-b border-primary/20 shadow-xl">
+        <div className="container mx-auto px-4 py-8">
+          <motion.h1 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-6xl font-black tracking-tighter text-center bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent [text-shadow:_4px_4px_8px_rgb(0_0_0_/_40%)] uppercase relative"
+          >
+            <span className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent blur-xl"></span>
             XYZ - 24/7 - FITNESS CENTER
-          </h1>
+          </motion.h1>
         </div>
       </div>
       
@@ -86,37 +91,36 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="mb-8 p-8 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent backdrop-blur-sm border border-primary/10"
+          className="mb-8 p-8 rounded-xl bg-gradient-to-r from-primary/15 via-primary/10 to-transparent backdrop-blur-sm border border-primary/20 shadow-lg hover:shadow-primary/5 transition-all"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-center"
+            className="text-center relative"
           >
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-3">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.5, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent blur-2xl"
+            />
+            <h2 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
               Welcome back!
             </h2>
             <motion.p
               initial={{ scale: 1 }}
               animate={{ scale: [1, 1.02, 1] }}
-              transition={{ duration: 0.5, repeat: 1 }}
-              className="text-3xl font-semibold bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent"
+              transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+              className="text-4xl font-semibold bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent"
             >
               {profile?.display_name || user?.email}
             </motion.p>
-            <p className="text-muted-foreground mt-2">Ready for another great workout? 💪</p>
+            <p className="text-muted-foreground mt-4 text-lg">Ready for another great workout? 💪</p>
           </motion.div>
         </motion.div>
 
         <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-2">
-              Welcome back{profile?.display_name ? `, ${profile.display_name}` : '!'}
-            </h2>
-            <p className="text-muted-foreground">Here's your fitness overview</p>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <Card className="p-4 flex items-center space-x-4">
               <div className="p-3 bg-primary/10 rounded-full">
