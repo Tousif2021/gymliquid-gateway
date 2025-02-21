@@ -72,30 +72,42 @@ const Dashboard = () => {
   const greeting = "Welcome"; //Added greeting variable
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
-      <div className="container mx-auto max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5">
+      <div className="w-full bg-black/90 border-b border-primary/20 shadow-lg">
+        <div className="container mx-auto px-4 py-6">
+          <h1 className="text-5xl font-black tracking-tighter text-center bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent [text-shadow:_2px_2px_2px_rgb(0_0_0_/_20%)] uppercase">
+            XYZ - 24/7 - FITNESS CENTER
+          </h1>
+        </div>
+      </div>
+      
+      <div className="container mx-auto max-w-4xl p-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8 p-6 rounded-lg bg-gradient-to-r from-primary/10 via-primary/5 to-transparent backdrop-blur-sm"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="mb-8 p-8 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent backdrop-blur-sm border border-primary/10"
         >
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            {greeting},
-          </h2>
-          <p className="text-2xl mt-2 text-muted-foreground font-medium">
-            {profile?.display_name || user?.email}
-          </p>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="text-center"
+          >
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-3">
+              Welcome back!
+            </h2>
+            <motion.p
+              initial={{ scale: 1 }}
+              animate={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 0.5, repeat: 1 }}
+              className="text-3xl font-semibold bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent"
+            >
+              {profile?.display_name || user?.email}
+            </motion.p>
+            <p className="text-muted-foreground mt-2">Ready for another great workout? 💪</p>
+          </motion.div>
         </motion.div>
-        <div className="w-full bg-primary/5 border-b">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                XYZ - 24/7 - FITNESS CENTER
-              </h1>
-            </div>
-          </div>
-        </div>
 
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
