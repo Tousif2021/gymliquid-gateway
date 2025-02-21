@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LockIcon, Camera, Trash2, CreditCard, Moon, Sun } from "lucide-react";
+import { LockIcon, Camera, Trash2, CreditCard, Moon, Sun, Mail, Phone, Calendar, Star, Clock, Copy, Repeat, Smartphone } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
+import { toast } from "@/components/ui/use-toast";
 
 
 const Profile = () => {
@@ -101,9 +102,17 @@ const handleRemovePhoto = async () => {
   await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
 };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(user.id).then(() => {
+      toast({
+        title: "Member ID copied!",
+        description: "Your Member ID has been copied to your clipboard.",
+      });
+    });
+  };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -128,14 +137,14 @@ const handleRemovePhoto = async () => {
         </div>
 
         <div className="space-y-6">
-          <Card>
+          <Card className="shadow-md rounded-lg"> {/* Added shadow and rounded corners */}
             <CardContent className="pt-6">
               <div className="flex items-start space-x-6">
                 <div className="relative">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <div className="relative cursor-pointer group">
-                        <Avatar className="h-24 w-24 bg-primary/10">
+                        <Avatar className="h-24 w-24 bg-primary/10 rounded-full"> {/* Added rounded corners */}
                           <AvatarImage src={profileImage || profile?.avatar_url || "/public/placeholder.svg"} />
                           <AvatarFallback className="text-xl font-semibold text-primary">
                             {getInitials(profile?.first_name)}
@@ -148,18 +157,18 @@ const handleRemovePhoto = async () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem asChild>
-                          <label htmlFor="profile-image-upload" className="flex items-center cursor-pointer">
-                            <Camera className="mr-2 h-4 w-4" />
-                            Change Photo
-                            <input
-                              id="profile-image-upload"
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={handleImageUpload}
-                            />
-                          </label>
-                        </DropdownMenuItem>
+                        <label htmlFor="profile-image-upload" className="flex items-center cursor-pointer">
+                          <Camera className="mr-2 h-4 w-4" />
+                          Change Photo
+                          <input
+                            id="profile-image-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleImageUpload}
+                          />
+                        </label>
+                      </DropdownMenuItem>
 
                       <DropdownMenuItem onClick={handleRemovePhoto} className="text-destructive">
                         <Trash2 className="mr-2 h-4 w-4" />
@@ -182,34 +191,39 @@ const handleRemovePhoto = async () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="shadow-md rounded-lg"> {/* Added shadow and rounded corners */}
             <CardHeader>
-              <CardTitle className="text-lg">Membership Details</CardTitle>
+              <CardTitle className="text-lg font-bold">Membership Details</CardTitle> {/* Made title bold */}
             </CardHeader>
             <CardContent>
               <div className="space-y-5 text-sm">
                 <div className="flex items-center space-x-3">
+                  <Mail className="h-4 w-4" /> {/* Added icon */}
                   <span className="font-semibold">Email:</span>
                   <span className="text-muted-foreground">{user.email}</span>
                 </div>
                 <div className="flex items-center space-x-3">
+                  <Phone className="h-4 w-4" /> {/* Added icon */}
                   <span className="font-semibold">Phone:</span>
                   <span className="text-muted-foreground">
                     {profile?.phone_number || "Not provided"}
                   </span>
                 </div>
                 <div className="flex items-center space-x-3">
+                  <Calendar className="h-4 w-4" /> {/* Added icon */}
                   <span className="font-semibold">Member Since:</span>
                   <span className="text-muted-foreground">{formatDate(profile?.membership_since)}</span>
                 </div>
                 <div className="flex items-center space-x-3">
+                  <Star className="h-4 w-4" /> {/* Added icon */}
                   <span className="font-semibold">Membership Type:</span>
                   <span className="text-muted-foreground capitalize">{profile?.membership_type || "Basic"}</span>
                 </div>
                 <div className="flex items-center space-x-3">
+                  <Clock className="h-4 w-4" /> {/* Added icon */}
                   <span className="font-semibold">Expiry Date:</span>
                   <span className="text-muted-foreground">
-                    {profile?.membership_expiry ? formatDate(profile.membership_expiry) : "Auto-renewal"}
+                    {profile?.membership_expiry ? formatDate(profile.membership_expiry) : <span className="text-green-500">Auto-renewal</span>} {/* Highlighted auto-renewal */}
                   </span>
                 </div>
                 <div className="p-3 rounded-lg border-2 border-dashed flex items-center justify-between bg-muted/50">
@@ -217,7 +231,9 @@ const handleRemovePhoto = async () => {
                     <span className="font-semibold block mb-1">Member ID</span>
                     <span className="text-muted-foreground">{user.id}</span>
                   </div>
-                  <LockIcon className="text-muted-foreground h-4 w-4" />
+                  <div onClick={handleCopy} className="cursor-pointer hover:text-primary"> {/* Added copy functionality */}
+                    <Copy className="text-muted-foreground h-4 w-4" />
+                  </div>
                 </div>
                 <div className="p-3 rounded-lg border-2 border flex items-center justify-between bg-muted/50">
                   <div>
@@ -228,12 +244,15 @@ const handleRemovePhoto = async () => {
                   </div>
                   <CreditCard className="text-muted-foreground h-4 w-4" />
                 </div>
+                {profile?.payment_method ? null : (
+                  <Button className="w-full bg-blue-500 hover:bg-blue-700 text-white">Set Up Now</Button>
+                )} {/* Added Set Up Now button */}
               </div>
             </CardContent>
           </Card>
 
-          <Button 
-            className="w-full bg-[#ea384c] hover:bg-[#ea384c]/90 text-white"
+          <Button
+            className="w-full bg-[#ea384c] hover:bg-[#ea384c]/90 text-white rounded-lg"
             onClick={handleSignOut}
           >
             Sign Out
