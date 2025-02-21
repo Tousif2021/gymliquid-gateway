@@ -105,11 +105,11 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="relative mb-12">
-          <h1 className="text-6xl font-black text-center py-8 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 drop-shadow-[0_0_35px_rgba(217,70,239,0.35)] tracking-tight">
+        <div className="relative mb-8">
+          <h1 className="text-6xl font-black text-center py-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-primary to-blue-400 dark:from-blue-400 dark:via-blue-500 dark:to-primary tracking-tight">
             XYZ 24/7 GYM
           </h1>
-          <div className="absolute -skew-y-3 -z-10 inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 blur-xl"></div>
+          <div className="absolute -skew-y-3 -z-10 inset-0 bg-gradient-to-r from-blue-500/10 via-primary/10 to-blue-400/10 dark:from-blue-400/20 dark:via-blue-500/20 dark:to-primary/20 blur-xl"></div>
         </div>
 
         <div className="mb-6 p-4 glass-card rounded-lg">
@@ -120,8 +120,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      <div className="w-full bg-gradient-to-r from-black via-black/95 to-black/90 border-b border-primary/20 shadow-xl">
-        <div className="container mx-auto px-4 py-8">
+      <motion.div className="container mx-auto px-4">
           <motion.h1 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
