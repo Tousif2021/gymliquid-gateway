@@ -1,11 +1,12 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -18,6 +19,14 @@ const Auth = () => {
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const validatePassword = (password: string) => {
     if (mode === "signup" && password.length < 6) {
@@ -39,24 +48,61 @@ const Auth = () => {
 
     try {
       if (mode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
+        
         if (error) throw error;
-        navigate("/dashboard");
+        
+        if (data.user) {
+          // Create or update profile
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .upsert({
+              id: data.user.id,
+              email: data.user.email,
+              updated_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+
+          if (profileError) {
+            console.error('Error updating profile:', profileError);
+          }
+        }
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             data: {
               first_name: firstName,
               last_name: lastName,
+              display_name: `${firstName} ${lastName}`.trim(),
             },
           },
         });
+        
         if (error) throw error;
+
+        if (data.user) {
+          // Create initial profile
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              first_name: firstName,
+              last_name: lastName,
+              display_name: `${firstName} ${lastName}`.trim(),
+              email: data.user.email,
+            });
+
+          if (profileError) {
+            console.error('Error creating profile:', profileError);
+          }
+        }
+        
         toast({
           title: "Success!",
           description: "Please check your email to confirm your account.",
@@ -77,7 +123,9 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{mode === "login" ? "Welcome Back" : "Get Started"}</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            {mode === "login" ? "Welcome Back" : "Create Your Account"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

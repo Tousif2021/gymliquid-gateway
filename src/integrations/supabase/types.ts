@@ -42,8 +42,39 @@ export type Database = {
         }
         Relationships: []
       }
+      classes: {
+        Row: {
+          capacity: number
+          created_at: string | null
+          description: string | null
+          id: string
+          instructor_id: string | null
+          name: string
+          schedule: string
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructor_id?: string | null
+          name: string
+          schedule: string
+        }
+        Update: {
+          capacity?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructor_id?: string | null
+          name?: string
+          schedule?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          avatar_url: string | null
           average_visit_duration: number | null
           calories_burned: number | null
           completed_programs: Json | null
@@ -60,11 +91,13 @@ export type Database = {
           membership_type: string | null
           payment_method: Json | null
           phone_number: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
           total_visits: number | null
           updated_at: string | null
           visits_this_month: number | null
         }
         Insert: {
+          avatar_url?: string | null
           average_visit_duration?: number | null
           calories_burned?: number | null
           completed_programs?: Json | null
@@ -81,11 +114,13 @@ export type Database = {
           membership_type?: string | null
           payment_method?: Json | null
           phone_number?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
           total_visits?: number | null
           updated_at?: string | null
           visits_this_month?: number | null
         }
         Update: {
+          avatar_url?: string | null
           average_visit_duration?: number | null
           calories_burned?: number | null
           completed_programs?: Json | null
@@ -102,9 +137,34 @@ export type Database = {
           membership_type?: string | null
           payment_method?: Json | null
           phone_number?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
           total_visits?: number | null
           updated_at?: string | null
           visits_this_month?: number | null
+        }
+        Relationships: []
+      }
+      workout_plans: {
+        Row: {
+          created_at: string | null
+          exercises: Json
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          exercises?: Json
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          exercises?: Json
+          id?: string
+          name?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -116,7 +176,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "member" | "staff" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
