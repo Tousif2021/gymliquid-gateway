@@ -24,14 +24,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { toast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input"; // Import Input component
-
+import { Input } from "@/components/ui/input";
 
 const Profile = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
-  const [profileImage, setProfileImage] = useState(null); // Initialize state here
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -84,32 +83,37 @@ const Profile = () => {
       .join("")
       .toUpperCase();
   };
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  if (!event.target.files || event.target.files.length === 0) return;
+    if (!event.target.files || event.target.files.length === 0) return;
 
-  const file = event.target.files[0];
-  const fileUrl = URL.createObjectURL(file); // Temporary preview
+    const file = event.target.files[0];
+    const fileUrl = URL.createObjectURL(file);
 
-  // Update the avatar image immediately
-  setProfileImage(fileUrl);
+    setProfileImage(fileUrl);
 
-  // Upload to Supabase storage (optional)
-  const { data, error } = await supabase.storage
-    .from("avatars")
-    .upload(`profile_${user.id}`, file, { upsert: true });
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .upload(`profile_${user.id}`, file, { upsert: true });
 
-  if (error) {
-    console.error("Image upload failed:", error);
-  } else {
-    const publicUrl = supabase.storage.from("avatars").getPublicUrl(data.path);
-    await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
-  }
-};
+    if (error) {
+      console.error("Image upload failed:", error);
+    } else {
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(data.path);
+      
+      await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+    }
+  };
 
-const handleRemovePhoto = async () => {
-  setProfileImage(null); // Remove preview
-  await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
-};
+  const handleRemovePhoto = async () => {
+    setProfileImage(null);
+    await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(user.id).then(() => {
@@ -146,14 +150,14 @@ const handleRemovePhoto = async () => {
         </div>
 
         <div className="space-y-6">
-          <Card className="shadow-md rounded-lg"> {/* Added shadow and rounded corners */}
+          <Card className="shadow-md rounded-lg">
             <CardContent className="pt-6">
               <div className="flex items-start space-x-6">
                 <div className="relative">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <div className="relative cursor-pointer group">
-                        <Avatar className="h-24 w-24 bg-primary/10 rounded-full"> {/* Added rounded corners */}
+                        <Avatar className="h-24 w-24 bg-primary/10 rounded-full">
                           <AvatarImage src={profileImage || profile?.avatar_url || "/public/placeholder.svg"} />
                           <AvatarFallback className="text-xl font-semibold text-primary">
                             {getInitials(profile?.first_name)}
@@ -200,14 +204,14 @@ const handleRemovePhoto = async () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md rounded-lg"> {/* Added shadow and rounded corners */}
+          <Card className="shadow-md rounded-lg">
             <CardHeader>
-              <CardTitle className="text-lg font-bold">Membership Details</CardTitle> {/* Made title bold */}
+              <CardTitle className="text-lg font-bold">Membership Details</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-5 text-sm">
                 <div className="flex items-center space-x-3">
-                  <Mail className="h-4 w-4" /> {/* Added icon */}
+                  <Mail className="h-4 w-4" />
                   <span className="font-semibold">Email:</span>
                   <span className="text-muted-foreground">{user.email}</span>
                 </div>
@@ -268,20 +272,20 @@ const handleRemovePhoto = async () => {
                   )}
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Calendar className="h-4 w-4" /> {/* Added icon */}
+                  <Calendar className="h-4 w-4" />
                   <span className="font-semibold">Member Since:</span>
                   <span className="text-muted-foreground">{formatDate(profile?.membership_since)}</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Star className="h-4 w-4" /> {/* Added icon */}
+                  <Star className="h-4 w-4" />
                   <span className="font-semibold">Membership Type:</span>
                   <span className="text-muted-foreground capitalize">{profile?.membership_type || "Basic"}</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Clock className="h-4 w-4" /> {/* Added icon */}
+                  <Clock className="h-4 w-4" />
                   <span className="font-semibold">Expiry Date:</span>
                   <span className="text-muted-foreground">
-                    {profile?.membership_expiry ? formatDate(profile.membership_expiry) : <span className="text-green-500">Auto-renewal</span>} {/* Highlighted auto-renewal */}
+                    {profile?.membership_expiry ? formatDate(profile.membership_expiry) : <span className="text-green-500">Auto-renewal</span>}
                   </span>
                 </div>
                 <div className="p-3 rounded-lg border-2 border-dashed flex items-center justify-between bg-muted/50">
@@ -289,7 +293,7 @@ const handleRemovePhoto = async () => {
                     <span className="font-semibold block mb-1">Member ID</span>
                     <span className="text-muted-foreground">{user.id}</span>
                   </div>
-                  <div onClick={handleCopy} className="cursor-pointer hover:text-primary"> {/* Added copy functionality */}
+                  <div onClick={handleCopy} className="cursor-pointer hover:text-primary">
                     <Copy className="text-muted-foreground h-4 w-4" />
                   </div>
                 </div>
@@ -302,7 +306,6 @@ const handleRemovePhoto = async () => {
                   </div>
                   <CreditCard className="text-muted-foreground h-4 w-4" />
                 </div>
-                {/* Removed Set Up Now button */}
               </div>
             </CardContent>
           </Card>

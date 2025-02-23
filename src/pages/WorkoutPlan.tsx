@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Plus, Save, Trash2 } from "lucide-react";
+import { Database } from "@/integrations/supabase/types";
+
+type WorkoutPlansRow = Database["public"]["Tables"]["workout_plans"]["Row"];
 
 interface Exercise {
   name: string;
@@ -20,6 +23,7 @@ interface WorkoutPlan {
   name: string;
   exercises: Exercise[];
   user_id: string;
+  created_at?: string;
 }
 
 export default function WorkoutPlan() {
@@ -37,17 +41,30 @@ export default function WorkoutPlan() {
         .from("workout_plans")
         .select("*")
         .eq("user_id", user?.id);
-      return data || [];
+      
+      // Transform the data from JSON to our Exercise type
+      return (data || []).map((plan: WorkoutPlansRow) => ({
+        ...plan,
+        exercises: plan.exercises as Exercise[]
+      }));
     },
   });
 
   const createPlan = useMutation({
     mutationFn: async (plan: WorkoutPlan) => {
+      // Convert the plan to the format Supabase expects
+      const supabasePlan = {
+        name: plan.name,
+        user_id: plan.user_id,
+        exercises: plan.exercises as unknown as Json
+      };
+
       const { data, error } = await supabase
         .from("workout_plans")
-        .insert(plan)
+        .insert(supabasePlan)
         .select()
         .single();
+        
       if (error) throw error;
       return data;
     },
