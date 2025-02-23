@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,7 +11,6 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Classes from "./pages/Classes";
-import Admin from "./pages/Admin";
 import Scanner from "./pages/Scanner";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -33,7 +33,6 @@ const AppContent = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/workout-plan" element={<WorkoutPlan />} />
         <Route path="/classes" element={<Classes />} />
-        <Route path="/admin" element={<Admin />} />
         <Route path="/scanner" element={<Scanner />} />
         <Route path="/fitadvisor" element={<FitAdvisor />} />
         <Route path="/track-progress" element={<TrackProgress />} />
