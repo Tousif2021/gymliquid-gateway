@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +20,6 @@ const Auth = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (user) {
       navigate("/dashboard");
@@ -56,12 +54,14 @@ const Auth = () => {
         if (error) throw error;
         
         if (data.user) {
-          // Create or update profile
           const { error: profileError } = await supabase
             .from('profiles')
             .upsert({
               id: data.user.id,
-              email: data.user.email,
+              display_name: `${firstName} ${lastName}`.trim() || data.user.email,
+              membership_status: 'active',
+              membership_type: 'Basic',
+              membership_expiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
               updated_at: new Date().toISOString(),
             })
             .select()
@@ -71,6 +71,8 @@ const Auth = () => {
             console.error('Error updating profile:', profileError);
           }
         }
+
+        navigate("/dashboard");
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -79,7 +81,6 @@ const Auth = () => {
             data: {
               first_name: firstName,
               last_name: lastName,
-              display_name: `${firstName} ${lastName}`.trim(),
             },
           },
         });
@@ -87,15 +88,19 @@ const Auth = () => {
         if (error) throw error;
 
         if (data.user) {
-          // Create initial profile
           const { error: profileError } = await supabase
             .from('profiles')
-            .insert({
+            .upsert({
               id: data.user.id,
               first_name: firstName,
               last_name: lastName,
               display_name: `${firstName} ${lastName}`.trim(),
-              email: data.user.email,
+              membership_status: 'active',
+              membership_type: 'Basic',
+              membership_since: new Date().toISOString(),
+              membership_expiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+              visits_this_month: 0,
+              total_visits: 0
             });
 
           if (profileError) {

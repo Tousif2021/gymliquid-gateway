@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,36 +13,11 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format } from "date-fns";
-import { NutritionCarousel } from "@/components/ui/NutritionCarousel"; // Import NutritionCarousel
+import { NutritionCarousel } from "@/components/ui/NutritionCarousel";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [weather, setWeather] = useState({ temp: 0, condition: '' });
-
-  useEffect(() => {
-    // Get user location and fetch weather
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const { latitude, longitude } = position.coords;
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_KEY}&units=metric`
-      );
-      const data = await response.json();
-      setWeather({
-        temp: Math.round(data.main.temp),
-        condition: data.weather[0].main
-      });
-    });
-  }, []);
-
-  const getMotivationalMessage = () => {
-    if (weather.temp < 10) {
-      return "❄️ Cold outside? The gym is warm and waiting for you! Let's crush those goals!";
-    } else if (weather.temp > 25) {
-      return "🌞 Hot day? Our air-conditioned gym is the perfect place to stay fit!";
-    }
-    return "🎯 Perfect weather for a perfect workout! See you at the gym!";
-  };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -100,8 +76,6 @@ const Dashboard = () => {
     return formatDistanceToNow(new Date(date), { addSuffix: true });
   };
 
-  const greeting = "Welcome"; //Added greeting variable
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
       <div className="container mx-auto max-w-4xl">
@@ -112,23 +86,9 @@ const Dashboard = () => {
           className="relative mb-8"
         >
           <h1 className="text-6xl font-black text-center py-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-primary to-blue-400 dark:from-blue-400 dark:via-blue-500 dark:to-primary tracking-tight">
-            XYZ 24/7 GYM
+            Allstars Training Center
           </h1>
           <div className="absolute -skew-y-3 -z-10 inset-0 bg-gradient-to-r from-blue-500/10 via-primary/10 to-blue-400/10 dark:from-blue-400/20 dark:via-blue-500/20 dark:to-primary/20 blur-xl"></div>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6 p-4 glass-card rounded-lg"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-medium">{weather.temp}°C - {weather.condition}</p>
-              <p className="text-sm text-muted-foreground mt-1">{getMotivationalMessage()}</p>
-            </div>
-          </div>
         </motion.div>
 
         <motion.div
@@ -158,7 +118,7 @@ const Dashboard = () => {
               transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
               className="text-4xl font-semibold bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent"
             >
-              {profile?.display_name || user?.email}
+              {profile?.display_name || profile?.first_name || "Member"}
             </motion.p>
             <p className="text-muted-foreground mt-4 text-lg">Ready for another great workout? 💪</p>
           </motion.div>
@@ -181,8 +141,8 @@ const Dashboard = () => {
                 <BarChartIcon className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">This Month's Visits</p>
-                <p className="font-medium">{profile?.visits_this_month || 0} visits</p>
+                <p className="text-sm text-muted-foreground">Membership Status</p>
+                <p className="font-medium">{profile?.membership_status || "Not Active"}</p>
               </div>
             </Card>
 
@@ -192,7 +152,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Next Class</p>
-                <p className="font-medium">Yoga - {format(new Date(), "MMM dd, hh:mm a")}</p>
+                <p className="font-medium">No upcoming classes</p>
               </div>
             </Card>
           </div>
@@ -220,7 +180,7 @@ const Dashboard = () => {
           </div>
           <div className="mt-8">
             <NutritionCarousel />
-          </div> {/* Add NutritionCarousel component */}
+          </div>
         </div>
       </div>
     </div>
