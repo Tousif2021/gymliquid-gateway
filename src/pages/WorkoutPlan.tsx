@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Plus, Save, Trash2 } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types";
 
 type WorkoutPlansRow = Database["public"]["Tables"]["workout_plans"]["Row"];
 
@@ -42,17 +43,17 @@ export default function WorkoutPlan() {
         .select("*")
         .eq("user_id", user?.id);
       
-      // Transform the data from JSON to our Exercise type
+      // Transform the data from JSON to our Exercise type with proper type assertion
       return (data || []).map((plan: WorkoutPlansRow) => ({
         ...plan,
-        exercises: plan.exercises as Exercise[]
+        exercises: (plan.exercises as unknown as Exercise[]) || []
       }));
     },
   });
 
   const createPlan = useMutation({
     mutationFn: async (plan: WorkoutPlan) => {
-      // Convert the plan to the format Supabase expects
+      // Convert the plan to the format Supabase expects with proper type casting
       const supabasePlan = {
         name: plan.name,
         user_id: plan.user_id,
