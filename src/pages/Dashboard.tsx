@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
@@ -12,62 +12,84 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { formatDistanceToNow, format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { NutritionCarousel } from "@/components/ui/NutritionCarousel";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth?mode=login");
-    }
-  }, [user, loading, navigate]);
-
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user?.id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching profile:", error);
+        throw error;
+      }
+      
+      if (!data) {
+        // Create profile if it doesn't exist
+        const { data: newProfile, error: createError } = await supabase
+          .from("profiles")
+          .insert({
+            id: user?.id,
+            display_name: user?.email?.split('@')[0] || "Member",
+            membership_status: "active",
+            membership_type: "Basic",
+            membership_since: new Date().toISOString(),
+            membership_expiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        return newProfile;
+      }
+
       return data;
     },
-    enabled: !!user,
+    enabled: !!user?.id,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnMount: true
   });
 
-  if (loading || !user) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth?mode=login");
+    }
+  }, [user, authLoading, navigate]);
 
   const features = [
     {
       title: "Workout Plans",
       description: "Create and manage your custom workout routines",
       icon: Dumbbell,
-      onClick: () => navigate("/workout-plan"),
+      path: "/workout-plan",
     },
     {
       title: "Digital Membership",
       description: "Access your membership card and QR code instantly",
       icon: QrCodeIcon,
-      onClick: () => navigate("/scanner"),
+      path: "/scanner",
     },
     {
       title: "Book Classes",
       description: "Browse and book fitness classes",
       icon: CalendarIcon,
-      onClick: () => navigate("/classes"),
+      path: "/classes",
     },
     {
       title: "Track Progress",
       description: "Monitor your gym visits and achievements",
       icon: BarChartIcon,
-      onClick: () => navigate("/track-progress"),
+      path: "/track-progress",
     },
   ];
 
@@ -75,6 +97,12 @@ const Dashboard = () => {
     if (!date) return "No visits yet";
     return formatDistanceToNow(new Date(date), { addSuffix: true });
   };
+
+  if (authLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  const loading = authLoading || profileLoading;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4">
@@ -112,14 +140,18 @@ const Dashboard = () => {
             <h2 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
               Welcome back!
             </h2>
-            <motion.p
-              initial={{ scale: 1 }}
-              animate={{ scale: [1, 1.02, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-              className="text-4xl font-semibold bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent"
-            >
-              {profile?.display_name || profile?.first_name || "Member"}
-            </motion.p>
+            {loading ? (
+              <Skeleton className="h-12 w-48 mx-auto mb-4" />
+            ) : (
+              <motion.p
+                initial={{ scale: 1 }}
+                animate={{ scale: [1, 1.02, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+                className="text-4xl font-semibold bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent"
+              >
+                {profile?.first_name || profile?.display_name || "Member"}
+              </motion.p>
+            )}
             <p className="text-muted-foreground mt-4 text-lg">Ready for another great workout? 💪</p>
           </motion.div>
         </motion.div>
@@ -132,7 +164,11 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Last Visit</p>
-                <p className="font-medium">{formatLastVisit(profile?.last_visit)}</p>
+                {loading ? (
+                  <Skeleton className="h-4 w-24" />
+                ) : (
+                  <p className="font-medium">{formatLastVisit(profile?.last_visit)}</p>
+                )}
               </div>
             </Card>
 
@@ -142,7 +178,13 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Membership Status</p>
-                <p className="font-medium">{profile?.membership_status || "Not Active"}</p>
+                {loading ? (
+                  <Skeleton className="h-4 w-24" />
+                ) : (
+                  <p className="font-medium capitalize">
+                    {profile?.membership_status || "Not Active"}
+                  </p>
+                )}
               </div>
             </Card>
 
@@ -157,7 +199,7 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -165,16 +207,17 @@ const Dashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Card
-                  className="p-6 cursor-pointer hover:shadow-lg transition-all"
-                  onClick={feature.onClick}
-                >
-                  <feature.icon className="w-12 h-12 text-primary mb-4" />
-                  <h3 className="text-xl font-semibold text-primary mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </Card>
+                <Link to={feature.path}>
+                  <Card
+                    className="p-6 cursor-pointer hover:shadow-lg transition-all h-full"
+                  >
+                    <feature.icon className="w-12 h-12 text-primary mb-4" />
+                    <h3 className="text-xl font-semibold text-primary mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </Card>
+                </Link>
               </motion.div>
             ))}
           </div>
