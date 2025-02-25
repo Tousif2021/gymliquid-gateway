@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -30,7 +31,29 @@ const Profile = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  const { data: profile, isError } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      if (!user?.id) throw new Error("No user ID");
+      
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    enabled: !!user?.id,
+    retry: 1
+  });
 
   useEffect(() => {
     if (!loading && !user) {
@@ -38,20 +61,15 @@ const Profile = () => {
     }
   }, [user, loading, navigate]);
 
-  const { data: profile } = useQuery({
-    queryKey: ["profile", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user?.id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
+  useEffect(() => {
+    if (isError) {
+      toast({
+        title: "Error loading profile",
+        description: "Please try refreshing the page",
+        variant: "destructive",
+      });
+    }
+  }, [isError]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -59,7 +77,11 @@ const Profile = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   if (!user) {
@@ -98,21 +120,55 @@ const Profile = () => {
 
     if (error) {
       console.error("Image upload failed:", error);
+      toast({
+        title: "Error uploading image",
+        description: "Please try again",
+        variant: "destructive",
+      });
     } else {
       const { data: { publicUrl } } = supabase.storage
         .from("avatars")
         .getPublicUrl(data.path);
       
-      await supabase
+      const { error: updateError } = await supabase
         .from("profiles")
         .update({ avatar_url: publicUrl })
         .eq("id", user.id);
+
+      if (updateError) {
+        toast({
+          title: "Error updating profile",
+          description: "Could not update profile picture",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Profile picture updated successfully",
+        });
+      }
     }
   };
 
   const handleRemovePhoto = async () => {
     setProfileImage(null);
-    await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_url: null })
+      .eq("id", user.id);
+
+    if (error) {
+      toast({
+        title: "Error removing photo",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Profile picture removed successfully",
+      });
+    }
   };
 
   const handleCopy = () => {
