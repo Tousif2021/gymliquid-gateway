@@ -8,34 +8,44 @@ import {
   QrCode as QrCodeIcon, 
   Calendar as CalendarIcon, 
   BarChart2 as BarChartIcon, 
-  Dumbbell 
+  Dumbbell,
+  Loader2
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { NutritionCarousel } from "@/components/ui/NutritionCarousel";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const { data: profile, isLoading: profileLoading } = useQuery({
+  const { data: profile, isLoading: profileLoading, error } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      console.log("Fetching profile for user:", user?.id);
+      
+      const { data: existingProfile, error: fetchError } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user?.id)
         .maybeSingle();
 
-      if (error) {
-        console.error("Error fetching profile:", error);
-        throw error;
+      if (fetchError) {
+        console.error("Error fetching profile:", fetchError);
+        toast({
+          title: "Error",
+          description: "Failed to fetch profile data. Please try again.",
+          variant: "destructive",
+        });
+        throw fetchError;
       }
       
-      if (!data) {
-        // Create profile if it doesn't exist
+      if (!existingProfile) {
+        console.log("No profile found, creating new profile");
         const { data: newProfile, error: createError } = await supabase
           .from("profiles")
           .insert({
@@ -43,21 +53,33 @@ const Dashboard = () => {
             display_name: user?.email?.split('@')[0] || "Member",
             membership_status: "active",
             membership_type: "Basic",
+            role: "member",
             membership_since: new Date().toISOString(),
-            membership_expiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            membership_expiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            visits_this_month: 0,
+            total_visits: 0
           })
           .select()
           .single();
 
-        if (createError) throw createError;
+        if (createError) {
+          console.error("Error creating profile:", createError);
+          toast({
+            title: "Error",
+            description: "Failed to create profile. Please try again.",
+            variant: "destructive",
+          });
+          throw createError;
+        }
+
         return newProfile;
       }
 
-      return data;
+      return existingProfile;
     },
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    refetchOnMount: true
+    retry: 2
   });
 
   useEffect(() => {
@@ -65,6 +87,17 @@ const Dashboard = () => {
       navigate("/auth?mode=login");
     }
   }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (error) {
+      console.error("Profile query error:", error);
+      toast({
+        title: "Error",
+        description: "There was an error loading your profile. Please refresh the page.",
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
 
   const features = [
     {
@@ -98,8 +131,12 @@ const Dashboard = () => {
     return formatDistanceToNow(new Date(date), { addSuffix: true });
   };
 
-  if (authLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  if (authLoading || profileLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   const loading = authLoading || profileLoading;
