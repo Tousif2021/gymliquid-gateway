@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -11,7 +10,7 @@ import {
   Dumbbell,
   Loader2
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { NutritionCarousel } from "@/components/ui/NutritionCarousel";
@@ -22,25 +21,22 @@ const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: profile, isLoading: profileLoading, error } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
-      console.log("Fetching profile for user:", user?.id);
+      if (!user?.id) throw new Error("No user ID");
+      console.log("Fetching profile for user:", user.id);
       
       const { data: existingProfile, error: fetchError } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .maybeSingle();
 
       if (fetchError) {
         console.error("Error fetching profile:", fetchError);
-        toast({
-          title: "Error",
-          description: "Failed to fetch profile data. Please try again.",
-          variant: "destructive",
-        });
         throw fetchError;
       }
       
@@ -49,8 +45,8 @@ const Dashboard = () => {
         const { data: newProfile, error: createError } = await supabase
           .from("profiles")
           .insert({
-            id: user?.id,
-            display_name: user?.email?.split('@')[0] || "Member",
+            id: user.id,
+            display_name: user.email?.split('@')[0] || "Member",
             membership_status: "active",
             membership_type: "Basic",
             role: "member",
@@ -64,11 +60,6 @@ const Dashboard = () => {
 
         if (createError) {
           console.error("Error creating profile:", createError);
-          toast({
-            title: "Error",
-            description: "Failed to create profile. Please try again.",
-            variant: "destructive",
-          });
           throw createError;
         }
 
@@ -79,7 +70,8 @@ const Dashboard = () => {
     },
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    retry: 2
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
 
   useEffect(() => {
@@ -92,12 +84,14 @@ const Dashboard = () => {
     if (error) {
       console.error("Profile query error:", error);
       toast({
-        title: "Error",
-        description: "There was an error loading your profile. Please refresh the page.",
+        title: "Error loading profile",
+        description: "Please try refreshing the page",
         variant: "destructive",
       });
+      
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
     }
-  }, [error, toast]);
+  }, [error, toast, queryClient, user?.id]);
 
   const features = [
     {
