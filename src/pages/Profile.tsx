@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -15,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LockIcon, Camera, Trash2, CreditCard, Moon, Sun, Mail, Phone, Calendar, Star, Clock, Copy, Repeat, Smartphone } from "lucide-react";
+import { Camera, Trash2, CreditCard, Moon, Sun, Mail, Phone, Calendar, Star, Clock, Copy } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
   DropdownMenu,
@@ -33,10 +32,10 @@ const Profile = () => {
   const { theme, setTheme } = useTheme();
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  const { data: profile, isError } = useQuery({
+  const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
-      if (!user?.id) throw new Error("No user ID");
+      if (!user?.id) return null;
       
       const { data, error } = await supabase
         .from("profiles")
@@ -46,13 +45,18 @@ const Profile = () => {
 
       if (error) {
         console.error("Error fetching profile:", error);
-        throw error;
+        toast({
+          title: "Error loading profile",
+          description: error.message,
+          variant: "destructive",
+        });
+        return null;
       }
 
       return data;
     },
     enabled: !!user?.id,
-    retry: 1
+    retry: false
   });
 
   useEffect(() => {
@@ -61,22 +65,12 @@ const Profile = () => {
     }
   }, [user, loading, navigate]);
 
-  useEffect(() => {
-    if (isError) {
-      toast({
-        title: "Error loading profile",
-        description: "Please try refreshing the page",
-        variant: "destructive",
-      });
-    }
-  }, [isError]);
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/auth?mode=login");
   };
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
@@ -84,7 +78,7 @@ const Profile = () => {
     );
   }
 
-  if (!user) {
+  if (!user || !profile) {
     return null;
   }
 
@@ -111,21 +105,15 @@ const Profile = () => {
 
     const file = event.target.files[0];
     const fileUrl = URL.createObjectURL(file);
-
     setProfileImage(fileUrl);
 
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .upload(`profile_${user.id}`, file, { upsert: true });
+    try {
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .upload(`profile_${user.id}`, file, { upsert: true });
 
-    if (error) {
-      console.error("Image upload failed:", error);
-      toast({
-        title: "Error uploading image",
-        description: "Please try again",
-        variant: "destructive",
-      });
-    } else {
+      if (error) throw error;
+
       const { data: { publicUrl } } = supabase.storage
         .from("avatars")
         .getPublicUrl(data.path);
@@ -135,38 +123,42 @@ const Profile = () => {
         .update({ avatar_url: publicUrl })
         .eq("id", user.id);
 
-      if (updateError) {
-        toast({
-          title: "Error updating profile",
-          description: "Could not update profile picture",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: "Profile picture updated successfully",
-        });
-      }
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Success",
+        description: "Profile picture updated successfully",
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile picture",
+        variant: "destructive",
+      });
     }
   };
 
   const handleRemovePhoto = async () => {
-    setProfileImage(null);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ avatar_url: null })
-      .eq("id", user.id);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ avatar_url: null })
+        .eq("id", user.id);
 
-    if (error) {
-      toast({
-        title: "Error removing photo",
-        description: "Please try again",
-        variant: "destructive",
-      });
-    } else {
+      if (error) throw error;
+
+      setProfileImage(null);
       toast({
         title: "Success",
         description: "Profile picture removed successfully",
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to remove profile picture",
+        variant: "destructive",
       });
     }
   };
@@ -214,7 +206,7 @@ const Profile = () => {
                     <DropdownMenuTrigger asChild>
                       <div className="relative cursor-pointer group">
                         <Avatar className="h-24 w-24 bg-primary/10 rounded-full">
-                          <AvatarImage src={profileImage || profile?.avatar_url || "/public/placeholder.svg"} />
+                          <AvatarImage src={profileImage || profile?.avatar_url || "/placeholder.svg"} />
                           <AvatarFallback className="text-xl font-semibold text-primary">
                             {getInitials(profile?.first_name)}
                           </AvatarFallback>
@@ -238,12 +230,10 @@ const Profile = () => {
                           />
                         </label>
                       </DropdownMenuItem>
-
                       <DropdownMenuItem onClick={handleRemovePhoto} className="text-destructive">
                         <Trash2 className="mr-2 h-4 w-4" />
                         Remove Photo
                       </DropdownMenuItem>
-
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -299,23 +289,26 @@ const Profile = () => {
                           <DialogFooter>
                             <Button 
                               onClick={async () => {
-                                const phoneInput = document.getElementById('phone-input') as HTMLInputElement;
-                                const { error } = await supabase
-                                  .from('profiles')
-                                  .update({ phone_number: phoneInput.value })
-                                  .eq('id', profile.id);
-                                if (error) {
-                                  toast({
-                                    title: "Error",
-                                    description: "Failed to update phone number",
-                                    variant: "destructive"
-                                  });
-                                } else {
+                                try {
+                                  const phoneInput = document.getElementById('phone-input') as HTMLInputElement;
+                                  const { error } = await supabase
+                                    .from('profiles')
+                                    .update({ phone_number: phoneInput.value })
+                                    .eq('id', user.id);
+                                  
+                                  if (error) throw error;
+
                                   toast({
                                     title: "Success",
                                     description: "Phone number updated successfully"
                                   });
                                   window.location.reload();
+                                } catch (error) {
+                                  toast({
+                                    title: "Error",
+                                    description: "Failed to update phone number",
+                                    variant: "destructive"
+                                  });
                                 }
                               }}
                             >
